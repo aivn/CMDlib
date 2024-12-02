@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "Z2.hpp"
+#include "../Z2.hpp"
 
 int main() {
     double min  = 0.01;
