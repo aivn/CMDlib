@@ -13,7 +13,7 @@ int main() {
 
     std::ofstream out;
     out.open("Z2_coeffs.dat");
-    out << "#:m eta h l steps" << '\n';
+    out << "#:m eta h l steps Z2_norm" << '\n';
 
     for (int i = 0; i <= N; i++) {
         for (int j = 0; j <= N; j++) {
@@ -21,7 +21,7 @@ int main() {
             
             m_Z2.calc(m, eta);
             if (m*m < eta)
-                out << m << ' ' << eta << ' ' << m_Z2.h << ' ' << m_Z2.lambda << ' ' << m_Z2.steps << '\n';
+                out << m << ' ' << eta << ' ' << m_Z2.h << ' ' << m_Z2.lambda << ' ' << m_Z2.steps << ' ' << m_Z2.calc_Z2_norm() << '\n';
         }
         out << '\n';
     }

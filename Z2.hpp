@@ -6,7 +6,7 @@ const double ACCURACY = 1e-8;
 
 struct Z2 {
 private:
-    double E12_cF2, E1_cF2, E_cF2;
+    double cF2_norm, E12_cF2, E1_cF2, E_cF2;
 
 public:
     double h, lambda;
@@ -30,16 +30,16 @@ public:
         double delta_h = 1, delta_l = 1;
         steps = 0.;
         while (delta_h * delta_h + delta_l * delta_l > ACCURACY * ACCURACY && steps < 64) {
-            double _l      = 1 / lambda;
-            double _h      = 1 / h;
-            double _sqrt_l = sqrt(_l);
-            double _exp_2l = exp(-2 * lambda);
-            double _exp_2h = exp(-2 * h);
-            double cF2     = _exp_2h * _exp_2h * gsl_sf_dawson((.5) * M_SQRT2 * _sqrt_l * (h - 2 * lambda)) - 2 * _exp_2h * _exp_2l * gsl_sf_dawson((.5) * M_SQRT2 * _sqrt_l * h) + gsl_sf_dawson((.5) * M_SQRT2 * _sqrt_l * (h + 2 * lambda));
-            double _cF2    = 1 / cF2;
-            E12_cF2        = _cF2 * (_exp_2h * _exp_2h - 2 * _exp_2h * _exp_2l + 1);
-            E1_cF2         = _cF2 * (1 - _exp_2h * _exp_2h);
-            E_cF2          = _cF2 * (_exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1);
+            double _l        = 1 / lambda;
+            double _h        = 1 / h;
+            double _sqrt_l   = sqrt(_l);
+            double _exp_2l   = exp(-2 * lambda);
+            double _exp_2h   = exp(-2 * h);
+            cF2_norm         = _exp_2h * _exp_2h * gsl_sf_dawson((.5) * M_SQRT2 * _sqrt_l * (h - 2 * lambda)) - 2 * _exp_2h * _exp_2l * gsl_sf_dawson((.5) * M_SQRT2 * _sqrt_l * h) + gsl_sf_dawson((.5) * M_SQRT2 * _sqrt_l * (h + 2 * lambda));
+            double _cF2_norm = 1 / cF2_norm;
+            E12_cF2          = _cF2_norm * (_exp_2h * _exp_2h - 2 * _exp_2h * _exp_2l + 1);
+            E1_cF2           = _cF2_norm * (1 - _exp_2h * _exp_2h);
+            E_cF2            = _cF2_norm * (_exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1);
 
             double G1        = (.25) * M_SQRT2 * E12_cF2 * _sqrt_l - .5 * _h - .5 * _l * h - m;
             double G1_diff_h = (.25) * M_SQRT2 * E12_cF2 * _l * _sqrt_l * h + (.5) * M_SQRT2 * E1_cF2 * _sqrt_l + (.5) * _h * _h + _l * (-.25 * E12_cF2 * E12_cF2 - 1.0 / 2.0);
@@ -63,5 +63,13 @@ public:
             lambda = std::nan("1");
             steps  = std::nan("1");
         }
+    }
+
+    double calc_Z2_norm() {
+        return M_SQRT2 * (2 * M_PI) * (2 * M_PI) / (h * sqrt(lambda)) * cF2_norm;
+    }
+
+    double calc_Z2() {
+        return calc_Z2_norm() * exp(2 * h + lambda);
     }
 };
