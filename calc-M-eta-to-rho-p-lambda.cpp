@@ -21,10 +21,10 @@ inline double invL(double M){
 }
 
 int main(int argc, const char **argv){
-	if(argc!=3){ printf("usage: ./calc-M-eta-to-rho-p-lambda M eta ==> rho p lambda\n"); exit(1); }
+	if(argc!=3){ printf("usage: ./calc-M-eta-to-rho-p-lambda M eta ==> rho p lambda Z2 S1 S2\n"); exit(1); }
 	double M = atof(argv[1]), eta = atof(argv[2]), p = invL(M);
-	Z2 z2; z2.calc(M, eta);
-	printf("%f %f %f\n", (p>1e-3? z2.h/p: 1), p, (eta>M*M?z2.lambda:0));
+	Z2 z2; z2.calc(M, eta); double z = z2.calc_Z2(), S2 = log(z)/2 - z2.h*M -z2.lambda*eta/2;
+	printf("%f %f %f %f %f %f\n", (p>1e-3? z2.h/p: 1), p, (eta>M*M?z2.lambda:0), z, log(Z(p))-p*M, S2);
 	
 	return 0;
 }
