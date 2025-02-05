@@ -65,11 +65,6 @@ void Z2::calc_base() {
         E12_norm = _exp_2h * _exp_2h - 2 * _exp_2h * _exp_2l + 1;
         E1_norm  = 1 - _exp_2h * _exp_2h;
         E_norm   = _exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1;
-
-        double _cF2 = 1 / cF2_norm;
-        E12_cF2     = _cF2 * (_exp_2h * _exp_2h - 2 * _exp_2h * _exp_2l + 1);
-        E1_cF2      = _cF2 * (1 - _exp_2h * _exp_2h);
-        E_cF2       = _cF2 * (_exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1);
     } else sqrt_l = _sqrt_l = cF2_norm = E12_norm = E1_norm = E_norm = NAN;
 
     m_llb    = fabs(h) > 1e-3 ? (1 + _exp_2h) / (1 - _exp_2h) - _h : h / 3;
@@ -184,18 +179,6 @@ int Z2::calc_from_moments(double h0, double l0, double eps, int max_steps) {
 
             double expr_eta_diff_h = 2 * expr_m_diff_l;
             double expr_eta_diff_l = eta2 - eta * eta;
-
-            // double D = expr_m_diff_h * expr_eta_diff_l - expr_m_diff_l * expr_eta_diff_h;
-            // if (D == 0) break;
-            // double _D = 1 / D;
-            // delta_h   = ((m - m_ref) * expr_eta_diff_l - (eta - eta_ref) * expr_m_diff_l) * _D;
-            // delta_l   = ((eta - eta_ref) * expr_m_diff_h - (m - m_ref) * expr_eta_diff_h) * _D;
-
-            // double expr_m_diff_h = (.25) * M_SQRT2 * E12_cF2 * _l * _sqrt_l * h + (.5) * M_SQRT2 * E1_cF2 * _sqrt_l + (.5) * _h * _h + _l * (-.25 * E12_cF2 * E12_cF2 - 1.0 / 2.0);
-            // double expr_m_diff_l = -.25 * E12_cF2 * E1_cF2 * _l - 0.125 * M_SQRT2 * E12_cF2 * _l * _l * _sqrt_l * h * h - 0.125 * M_SQRT2 * E12_cF2 * _l * _sqrt_l + _l * _l * ((0.125) * E12_cF2 * E12_cF2 * h + (.5) * h) + _sqrt_l * ((.25) * M_SQRT2 * E12_cF2 + (.25) * M_SQRT2 * E_cF2);
-
-            // double expr_eta_diff_h = -.5 * E12_cF2 * E1_cF2 * _l - .25 * M_SQRT2 * E12_cF2 * _l * _l * _sqrt_l * h * h - .25 * M_SQRT2 * E12_cF2 * _l * _sqrt_l + _l * _l * ((.25) * E12_cF2 * E12_cF2 * h + h) + _sqrt_l * ((.5) * M_SQRT2 * E12_cF2 + (.5) * M_SQRT2 * E_cF2);
-            // double expr_eta_diff_l = (0.125) * M_SQRT2 * E12_cF2 * _l * _l * _l * _sqrt_l * h * h * h - .5 * E1_cF2 * E1_cF2 * _l + M_SQRT2 * E1_cF2 * _sqrt_l + _l * _l * _l * (-0.125 * E12_cF2 * E12_cF2 * h * h - h * h) + _l * _l * _sqrt_l * ((0.375) * M_SQRT2 * E12_cF2 * h - .25 * M_SQRT2 * E1_cF2 * h * h) + _l * _l * ((.5) * E12_cF2 * E1_cF2 * h + .5) + _l * _sqrt_l * (-.25 * M_SQRT2 * E12_cF2 * h - .25 * M_SQRT2 * E1_cF2 - .25 * M_SQRT2 * E_cF2 * h);
 
             double D = expr_m_diff_h * expr_eta_diff_l - expr_m_diff_l * expr_eta_diff_h;
             if (D == 0) break;
