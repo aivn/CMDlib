@@ -1,0 +1,23 @@
+# Data
+*.png
+*.dat
+*.pdf
+*.zip
+*.msh
+*.vtk
+
+# Latex
+*.out
+*.log
+*.aux
+*.synctex.gz
+*.eps
+*.dvi
+*.bbl
+*.blg
+
+# Python
+__pycache__/
+
+# gplt
+*.gplt3
