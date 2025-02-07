@@ -25,9 +25,9 @@ std::vector<int> off2pos(int off, const std::vector<int> & size, int D){
 
 //вектора glue1, glue2 должны быть сортированы по возрастанию
 std::vector<int> glue_vectors(const std::vector<int> & glue1, const std::vector<int> & v1, const std::vector<int> & glue2, const std::vector<int> & v2){
-    int n1 = v1.size(); int n2 = v2.size(); int m = glue1.size();
+    int n1 = v1.size(); int n2 = v2.size(); 
     int g1 = glue1.size(); int g2 = glue2.size();
-    int D = n1+n2+m; std::vector<int> res;
+    std::vector<int> res;
     int count1 = 0; int count2 = 0;
     for(int i = 0; i < n1; i++){
         bool b;
@@ -113,6 +113,16 @@ public:
     void set_mark(int index, int mark){ marks[index] = mark; }
     std::vector<int> get_marks() const{ return marks; }
 
+    int mark_to_ind(int mark_){
+        int res = 0;
+        for(int i = 0; i < D; i++){
+            if(mark_ == marks[i]){
+                res = i;
+                break;
+            }
+        }
+        return res;
+    }
 
     class iterator : public std::iterator<std::input_iterator_tag, T> {
     private:
@@ -265,7 +275,7 @@ inline Tensor<T> tensor_convolution(const Tensor<T> & T1, const std::vector<int>
 
 template <typename T>
 inline Tensor<T> tensor_convolution(const Tensor<T> & t, const std::vector<int> & v1, const std::vector<int> & v2){
-    int n{v1.size()}, m{t.get_D()};
+    int n = v1.size(); int m = t.get_D();
     std::vector<int> table1(m-2*n), table2(n), table3(n);
     std::vector<int> size1, size2;
     std::vector<int> t_size = t.get_size();

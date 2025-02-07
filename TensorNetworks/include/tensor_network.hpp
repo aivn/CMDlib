@@ -31,7 +31,7 @@ void find_correspondence(const std::vector<int> & glue1, int n1, std::map<int, i
     for(int i = 0; i < sep; i++){
         table1[g[i]] = i;
     }
-    for(int i = sep; i < sep+v2.size()-g1; i++){
+    for(int i = sep, sz_ = sep+v2.size()-g1; i < sz_; i++){
         table2[g[i]] = i;
     }
 }
@@ -46,10 +46,10 @@ class TensorNetwork{
 public:
     // в link в links_ glue1 должен соответствовать тензору уже имеющемуся в сети, а glue2 - новому
     // если тензоры в link совпадают - не важно
-    void add_tensor(Tensor<T> & t, std::map<int, TensorNet::link> & links_){
+    void add_tensor(const Tensor<T> & t, std::map<int, TensorNet::link> & links_){
         tensors[last_id] = t;
         last_id++;
-        for(const std::pair <int, TensorNet::link> & p : links_){
+        for(std::pair <int, TensorNet::link> p : links_){
             TensorNet::link l = p.second;
             l.t2_id = last_id-1; l.t1_id = p.first;
             std::set<int> & s1 = connections[l.t1_id]; std::set<int> & s2 = connections[l.t2_id];
@@ -57,6 +57,10 @@ public:
             std::set<int> s; s.insert(l.t1_id); s.insert(l.t2_id);
             links[s] = l;
         }
+    }
+
+    void replace_tensor(const Tensor<T> & t, int ID){
+        tensors[ID] = t;
     }
 
     void one_step(int t1_id, int t2_id){
@@ -163,7 +167,7 @@ public:
 
     void revision(){
         std::vector<int> for_erase;
-        for(const std::pair<int, std::set<int>> & p : connections){
+        for(std::pair<int, std::set<int>> p : connections){
             if(p.second.size() == 0){
                 for_erase.push_back(p.first);
             }
@@ -173,10 +177,14 @@ public:
         }
     }
 
+    Tensor<T> & get_tensor(int ID){
+        return tensors[ID];
+    }
+
     void convolve_Network(){
         while(connections.size() > 1){
             int id1 = -1; int id2 = -1;
-            for(const std::pair<int, std::set<int>> & p : connections){
+            for(std::pair<int, std::set<int>> p : connections){
                 for(int j : p.second){
                     id2 = j;
                     break;

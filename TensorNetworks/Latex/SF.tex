@@ -1,0 +1,194 @@
+% -*- mode: LaTeX; coding: utf-8 -*-
+\documentclass[12pt]{article}
+\usepackage[unicode,colorlinks]{hyperref}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{eufrak}
+\usepackage{epsfig}
+%\usepackage[mathscr]{eucal}
+\usepackage{psfrag}
+\usepackage{tabularx}
+\usepackage{wrapfig}
+%\usepackage{eucal}
+\usepackage{euscript}
+\usepackage{cite}
+\usepackage{mathtools}
+
+\usepackage[usenames]{color}
+\usepackage{colortbl} 
+\usepackage{nicematrix}
+
+\usepackage{tikz}
+
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblack}{rgb}{0.1,0.,0.3}
+\definecolor{codeemph}{rgb}{0.5,0.1,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\usepackage{listings}\lstset{
+	basicstyle=\ttfamily\fontsize{10pt}{10pt}\selectfont\color{codeblack},
+  commentstyle=\color{codegray},
+	keywordstyle=\tt\bf\color{codeemph},
+	belowskip=0pt
+    }
+
+\setlength{\topmargin}{-0.5in}
+\setlength{\oddsidemargin}{-5.mm}
+\setlength{\evensidemargin}{-5.mm}
+\setlength{\textwidth}{7.in}
+\setlength{\textheight}{9.in}
+
+\def\C{\mathbb C{}}
+\def\m{\mathbf m{}}
+\def\p{\mathbf p{}}
+
+\DeclareMathOperator{\tr}{tr}
+
+\begin{document}
+\begin{center}
+    Метод на основе аппроксимации сферическими функциями
+\end{center}
+
+\section{Сферические функции} 
+Нормированные сферические функции определены следующим образом:
+\begin{equation}\label{Ylm:eq}
+  Y_{l,m}(\theta, \phi) =
+  \begin{cases}
+    (-1)^m \left[\frac{(2l+1)(l-m)!}{4\pi(l+m)!} \right]^{1/2} P_{l, m}(\cos(\theta))\exp(i m \phi),\, m \geq 0,
+    \\
+    (-1)^m Y^{*}_{l, -m}(\theta, \phi), m < 0,
+  \end{cases}
+\end{equation}
+$l \geq 0,\, m = -l, -l+1, ..., l-1, l $ и $P_{l,m}(x)$ --- присоединенные функции Лежандра, определяемые соотношением:
+\begin{equation}
+  P_{l,m}(x) = (1-x^2)^{m/2}P_l^{(m)},\, m = 0, ..., l,
+\end{equation}
+где $P_l$ --- полиномы Лежандра, определяемые рекуррентно:
+\begin{equation}
+  P_0(x) = 1,\, P_1(x) = x,\, P_{n+1}(x) = \frac{2n+1}{n+1}xP_n(x)-\frac{n}{n+1}P_{n-1}(x).
+\end{equation}
+\section{Аппроксимация сферическими функциями}
+Метод основан на следующих соотношениях \cite{joyce1967classical}:
+\begin{equation}
+  \exp(\beta x) = (\pi/(2\beta))^{1/2}\sum_{l=0}^{\infty}(2l+1)I_{l+1/2}(\beta)P_l(x),
+\end{equation}
+где $I_\nu(x)$ --- функция Инфельда, и
+\begin{equation}
+  P_l(\mathbf{x}\cdot\mathbf{y}) = 4\pi(2l+1)^{-1}\sum_{m=-l}^{l} Y^{*}_{l, m}(\mathbf{x})Y_{l, m}(\mathbf{y}).
+\end{equation} 
+
+В итоге получаем 
+\begin{equation}
+  \exp(\beta\m_1\m_2) = \frac{(2\pi)^{3/2}}{\sqrt{\beta}}\sum_{l=0}^{\infty}I_{l+1/2}\sum_{m=-l}^{l} Y^{*}_{l, m}(\m_1)Y_{l, m}(\m_2).
+\end{equation}
+
+\section{Пример использования для замкнутой цепочки}
+Рассмотрим замкнутую цепочку, задаваемую функцией распределения:
+\begin{equation}
+  f = \frac{1}{Z} \exp\left[ \lambda_{1,N}(\m_1\m_N)+p_1(\m_1\m_0) + \sum_{i=2}^{N}\left( \lambda_{i,i-1}(\m_i\m_{i-1})+p_i(\m_i\m_0) \right) \right].
+\end{equation}
+
+Тогда выражение для $Z$ примет вид:
+\begin{multline}
+  \frac{Z}{(4\pi)^N} =  \int_{S^N}\frac{d\m_1...d\m_N}{(4\pi)^N} \exp\left[ \lambda_{1,N}(\m_1\m_N)+p_1(\m_1\m_0) + \sum_{i=2}^{N}\left( \lambda_{i,i-1}(\m_i\m_{i-1})+p_i(\m_i\m_0) \right) \right]
+  =\\= 
+  \sum_{l_1,m_1}\sum_{l_2,m_2}...\sum_{l_N,m_N}\int_{S^N}d \m_1...d \m_N \kappa_1 I_{l_1+1/2}(\lambda_{1,2})\exp(p_1\m_1\m_0)Y^{*}_{l_1, m_1}(\m_1)Y_{l_1, m_1}(\m_2)
+  \times\\ \times
+  \kappa_2 I_{l_2+1/2}(\lambda_{2,3})\exp(p_2\m_2\m_0)Y^{*}_{l_2, m_2}(\m_2)Y_{l_2, m_2}(\m_3)
+  \times ...
+  \\
+  \times \kappa_N I_{l_N+1/2}(\lambda_{1,N})\exp(p_N\m_N\m_0)Y^{*}_{l_N, m_N}(\m_N)Y_{l_N, m_N}(\m_1),
+\end{multline}
+где $\kappa_i = \sqrt{\frac{\pi}{2\lambda_{i,i+1}}}$.
+
+Введем матрицы с мультиндексами $\sigma_i = (l_i, m_i)$:
+\begin{equation}\label{chain_M:eq}
+  M^{(i)}_{\sigma_{i-1}, \sigma_i} = \kappa_i I_{l_i+1/2}(\lambda_{i-1,i}) \int_{S}d\m_i \exp(p_i \m_i\m_0)Y_{l_{i-1},m_{i-1}}(\m_i)Y^{*}_{l_i,m_i}(\m_i).
+\end{equation}
+
+Тогда $Z$ перепишется в виде:
+\begin{equation}\label{chain:eq}
+  \frac{Z}{(4\pi)^N} = \sum_{\sigma_1}\sum_{\sigma_2}...\sum_{\sigma_N} M^{(1)}_{\sigma_N, \sigma_1}M^{(2)}_{\sigma_1, \sigma_2}...M^{(N)}_{\sigma_{N-1}, \sigma_N} = \tr(M^{(1)}M^{(2)}...M^{(N)}).
+\end{equation}
+
+\section{Применение метода для расчета моментов многочастичных функций распределения}
+Рассмотрим функции распределения вида:
+
+
+\begin{equation}
+  f^{(N)} = \frac{1}{Z^{(N)}} \exp\left[\sum_{i < j}^{N} \lambda_{i,j}(\m_i\m_j) + \sum_{i = 1}^{N} (\m_i\p_i)\right].
+\end{equation}
+
+Задача состоит в расчете моментов ФП вида:
+
+\begin{equation}
+  T_{\alpha_1, \alpha_2, ..., \alpha_L} = \langle (\m^{ \alpha_1}_{i_1})^{s_1} (\m^{ \alpha_2}_{i_2})^{s_2} ... (\m^{ \alpha_L}_{i_L})^{s_{L}}\rangle,
+\end{equation}
+где среди индексов $i_1, ..., i_{L}$ каждый индекс может входить любое число раз.
+
+Далее необходимо задать направления стрелок в тензорной сети (произвольным образом), указывающие какой сомножитель (какая частица) имеет комплексное сопряжение, а именно:
+если стрелка идет из вершины, то соответствующий сомножитель не сопрягается комплексно и наоборот.
+Тогда тензорная сеть будет состоять из тензоров вида:
+
+\begin{multline}\label{TN:eq}
+  M^{(q)}_{\sigma_1, \sigma_2, ..., \sigma_k; \alpha_1, ... \alpha_p} = \int \limits_{S}d\m_q \exp(\p_q\cdot\m_q) \prod_{i=1}^{p}(m_q^{\alpha_i})^{s_i}
+  \times \\ \times
+  \prod_{i \in \sigma_{in}} Y^{*}_{l_i, m_i}(\m_q) \prod_{i \in \sigma_{out}}Y_{l_i, m_i}(\m_q) I_{l_i+1/2}(\lambda_{q, \tau^q_i})\frac{(2\pi)^{3/2}}{\sqrt{\lambda_{q, \tau^q_i}}},
+\end{multline}
+где $\sigma_i$ --- мультииндекс, соответсвующий индексам сферической функции, $\sigma_{in}$ --- множество номеров индексов, входящих в вершину $q$, а $\sigma_{out}$ --- выходящих из нее, при этом $\sigma_{in} \cup \sigma_{out} = \{1, 2, ..., k\} \,$ и $ \sigma_{in} \cap \sigma_{out} = \varnothing$,
+$\tau^q_i$ --- номер тензора (частицы), который имеет связь с тензором (частицей) с номером $q$.
+
+Тензорная сеть представляет собой свертку тензоров вида (\ref{TN:eq}) по всем индексам $l_i$, оставляя индексы $\alpha_i$. 
+
+\section{Оценка погрешности трехчастичной ункции распределения}
+
+Рассмотрим погрешнсоть вычисления тензора:
+\begin{equation}\label{exact_tensor}
+  T_{\alpha_1, \alpha_2, \alpha_3} = \sum\limits_{\sigma_1, \sigma_2, \sigma_3 = 0}^{\infty}M^{(1)}_{\sigma_3\sigma_1\alpha_1}M^{(2)}_{\sigma_1\sigma_2\alpha_2}M^{(3)}_{\sigma_2\sigma_3\alpha_3}.
+\end{equation}
+
+На практике вычисляется:
+\begin{equation}\label{approx_tensor}
+  \tilde{T}_{\alpha_1, \alpha_2, \alpha_3} = \sum\limits_{\sigma_1, \sigma_2, \sigma_3 = 0}^{n-1}\tilde{M}^{(1)}_{\sigma_3\sigma_1\alpha_1}\tilde{M}^{(2)}_{\sigma_1\sigma_2\alpha_2}\tilde{M}^{(3)}_{\sigma_2\sigma_3\alpha_3}, 
+\end{equation}
+
+где $\tilde{M}^{(i)}$ вычисляется численным интегрированием.
+
+Тогда погрешность может быть оценена как:
+
+\begin{multline}
+  \Delta = \left| T_{\alpha_1, \alpha_2, \alpha_3} - \tilde{T}_{\alpha_1, \alpha_2, \alpha_3} \right| \leq \underbrace{\left| \sum\limits_{\sigma_1, \sigma_2, \sigma_3 = n}^{\infty}\tilde{M}^{(1)}_{\sigma_3\sigma_1\alpha_1}\tilde{M}^{(2)}_{\sigma_1\sigma_2\alpha_2}\tilde{M}^{(3)}_{\sigma_2\sigma_3\alpha_3} \right|}_{\Delta_1} 
+  +\\+
+  \underbrace{\left| \sum\limits_{\sigma_1, \sigma_2, \sigma_3 = 0}^{\infty}\tilde{M}^{(1)}_{\sigma_3\sigma_1\alpha_1}\tilde{M}^{(2)}_{\sigma_1\sigma_2\alpha_2}\tilde{M}^{(3)}_{\sigma_2\sigma_3\alpha_3} - \sum\limits_{\sigma_1, \sigma_2, \sigma_3 = 0}^{\infty}M^{(1)}_{\sigma_3\sigma_1\alpha_1}M^{(2)}_{\sigma_1\sigma_2\alpha_2}M^{(3)}_{\sigma_2\sigma_3\alpha_3} \right|}_{\Delta_2},
+\end{multline}
+что было получено прибалением и вычитанием выражения (\ref{approx_tensor}) с пределами суммирования от $n$ до $\infty$.
+Если вычислять тензоры численно с высокой точностью (одномерные интегралы по сфере), то основной вклад в погрешность определяется $\Delta_1$.
+
+Рассмортрим первый вклад:
+\begin{equation}
+  \Delta_1 \leq \sum\limits_{\sigma_1, \sigma_2, \sigma_3 = n}^{\infty}\left|\tilde{M}^{(1)}_{\sigma_3\sigma_1\alpha_1}\right| \left|\tilde{M}^{(2)}_{\sigma_1\sigma_2\alpha_2}\right| \left|\tilde{M}^{(3)}_{\sigma_2\sigma_3\alpha_3} \right|.
+\end{equation}
+
+Далее 
+\begin{equation}
+  \left|\tilde{M}^{(1)}_{\sigma_3\sigma_1\alpha_1}\right| \lesssim \frac{(2\pi)^{3/2}}{\sqrt{\lambda_3}}\exp(p_1)I_{l_1+\frac{1}{2}}(\lambda_3)\delta_{l_1, l_3}\delta_{m_1, m_3}.
+\end{equation}
+В итоге получаем:
+\begin{equation}
+  \Delta_1 \lesssim \frac{(2\pi)^{\frac{9}{2}}}{\sqrt{\lambda_1\lambda_1\lambda_3}}\exp(p_1+p_2+p_3)\sum_{l_1 = l_{\max}+1}^{\infty}I_{l_1+\frac{1}{2}}(\lambda_1)I_{l_1+\frac{1}{2}}(\lambda_2)I_{l_1+\frac{1}{2}}(\lambda_3)(2l_1+1).
+\end{equation}
+\bibliographystyle{unsrt}
+\bibliography{literature.bib}
+\end{document}
+
+
