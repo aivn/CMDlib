@@ -1,2 +1,12 @@
+python_h_path=$(shell python3 -c 'import os, sysconfig; print(os.path.dirname(sysconfig.get_config_h_filename()))')
+
+Z2: include/Z2.hpp src/Z2.cpp swig/Z2.i
+	g++ -Wall -O3 -fPIC -g -c src/Z2.cpp src/special.cpp
+	swig -I"$(python_h_path)"  -I./ -Wall -python -c++ swig/Z2.i
+	g++ -Wall -O3 -fPIC -I"$(python_h_path)" -c swig/Z2_wrap.cxx 
+	g++ -shared -o _Z2.so Z2_wrap.o Z2.o special.o
+	mv swig/Z2.py swig/Z2_wrap.cxx .
+
+
 calc-M-eta-to-rho-p-lambda: calc-M-eta-to-rho-p-lambda.cpp Z2.hpp dawson/dawson.c dawson/*.h
 	g++ -Wall -O3 -o calc-M-eta-to-rho-p-lambda calc-M-eta-to-rho-p-lambda.cpp dawson/dawson.c

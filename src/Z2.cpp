@@ -199,3 +199,9 @@ int Z2::calc_from_moments(double h0, double l0, double eps, int max_steps) {
 }
 }  // namespace Z2_symmetrical
 
+
+namespace test{
+    double test_func(){
+        return 1.;
+    }
+}

@@ -35,7 +35,6 @@ private:
     double cF2_norm, E12_norm, E1_norm, E_norm;
     double m_llb, m_h_llb, eta_prmg;
     double m_h;
-    double m_eta;
 
     void calc_base();
 
@@ -50,7 +49,7 @@ private:
 public:
     double h, l;
     double m, eta;
-    double upsilon, eta2;
+    double m_eta, upsilon, eta2;
     double m_par_2, psi0;
     double Z2_norm;
 
