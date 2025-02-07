@@ -2,7 +2,6 @@
 
 #include "../include/Z2.hpp"
 #include "../include/special.hpp"
-#include <iostream>
 
 const int SIGMAS[2] = { -1, 1 };
 
@@ -26,10 +25,10 @@ inline double invL(double M) {
 namespace Z2_symmetrical {
 double cF2_norm(double h, double l) {
     double result = 0;
-    for (int s1 = 0; s1 < 2; s1++)
-        for (int s2 = 0; s2 < 2; s2++) {
-            s1 = SIGMAS[s1];
-            s2 = SIGMAS[s2];
+    for (int is1 = 0; is1 < 2; is1++)
+        for (int is2 = 0; is2 < 2; is2++) {
+            int s1 = SIGMAS[is1];
+            int s2 = SIGMAS[is2];
             result += s1 * s2 * exp((s1 + s2 - 2) * h + (s1 * s2 - 1) * l) * dawson((h + (s1 + s2) * l) / sqrt(2 * l));
         }
 
@@ -38,10 +37,10 @@ double cF2_norm(double h, double l) {
 
 double E_norm(bool arg_s1, bool arg_s2, double h, double l) {
     double result = 0;
-    for (int s1 = 0; s1 < 2; s1++)
-        for (int s2 = 0; s2 < 2; s2++) {
-            s1 = arg_s1 ? SIGMAS[s1] : 1;
-            s2 = arg_s2 ? SIGMAS[s2] : 1;
+    for (int is1 = 0; is1 < 2; is1++)
+        for (int is2 = 0; is2 < 2; is2++) {
+            int s1 = arg_s1 ? SIGMAS[is1] : 1;
+            int s2 = arg_s2 ? SIGMAS[is2] : 1;
             result += s1 * s2 * exp((s1 + s2 - 2) * h + (s1 * s2 - 1) * l);
         }
 
@@ -164,7 +163,6 @@ int Z2::calc_from_moments(double h0, double l0, double eps, int max_steps) {
 
         double delta_h = 1, delta_l = 1;
         while (delta_h * delta_h + delta_l * delta_l > eps * eps && steps < max_steps) {
-            // std::cout << h << ' ' << l << '\n';
             if (h == 0 || l == 0) break;
             if (l < 0) break;
 

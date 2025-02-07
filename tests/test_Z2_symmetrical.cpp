@@ -8,28 +8,31 @@
 using namespace Z2_symmetrical;
 
 int main() {
+    assert(fabs(cF2_norm(1, 2) - 0.21313592158965938) < 1e-6);
+    assert(fabs(E_norm(1, 1, 1, 2) - 1.0133581345354015) < 1e-5);
+
     Z2 z2 = Z2();
 
-    // z2.h = 1;
-    // z2.l = 2;
-    // z2.calc_from_coeffs();
-    // assert(fabs(z2.m - 0.4386289825963412) < 1e-6);
-    // assert(fabs(z2.eta - 0.5836393087685698) < 1e-6);
-    // assert(fabs3(z2.upsilon - 0.16575974898177726) < 1e-6);
-    // assert(fabs(z2.eta2 - 0.489067721282732) < 1e-6);
-    // assert(fabs(z2.m_par_2 - 0.41357015501252503) < 1e-6);
-    // assert(fabs(z2.psi0 + 0.01867252460236421) < 1e-6);
+    z2.h = 1;
+    z2.l = 2;
+    z2.calc_from_coeffs();
+    assert(fabs(z2.m - 0.4386289825963412) < 1e-6);
+    assert(fabs(z2.eta - 0.5836393087685698) < 1e-6);
+    assert(fabs(z2.upsilon - 0.16575974898177726) < 1e-6);
+    assert(fabs(z2.eta2 - 0.489067721282732) < 1e-6);
+    assert(fabs(z2.m_par_2 - 0.41357015501252503) < 1e-6);
+    assert(fabs(z2.psi0 + 0.01867252460236421) < 1e-6);
 
-    // z2.calc_from_moments(.5, .5);
-    // assert(fabs(z2.h - 1) < 1e-7);
-    // assert(fabs(z2.l - 2) < 1e-7);
+    z2.calc_from_moments(.5, .5);
+    assert(fabs(z2.h - 1) < 1e-7);
+    assert(fabs(z2.l - 2) < 1e-7);
 
-    // z2.m   = 0.5;
-    // z2.eta = 0.1;
-    // z2.calc_from_moments(.5, .5);
-    // assert(std::isnan(z2.h));
-    // assert(std::isnan(z2.l));
-    // assert(std::isnan(z2.upsilon));
+    z2.m   = 0.5;
+    z2.eta = 0.1;
+    z2.calc_from_moments(.5, .5);
+    assert(std::isnan(z2.h));
+    assert(std::isnan(z2.l));
+    assert(std::isnan(z2.upsilon));
 
     double min  = 0;
     double max  = 1;
