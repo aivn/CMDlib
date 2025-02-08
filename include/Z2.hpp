@@ -3,28 +3,24 @@
  * @author Andrei V. Lukianov <andrey.luk10@gmail.com>
  * @brief Расчет двухчастичной статистической суммы.
  * 
+ * Симметричный случай: случай, при котором hi = hj = h.
+ * 'norm' в симметричном случае означает умножение на exp(-2h-l).
+ * 
  * @copyright Copyright (c) 2025
  * Licensed under the Apache License, Version 2.0
  */
 #ifndef CMDLIB_Z2_HPP
 #define CMDLIB_Z2_HPP
 
-/**
- * @brief Расчет функции cF2(h, l)*exp(-2h-l) (см. текст).
- * Симметричный случай, при котором hi = hj = h.
- */
 double cF2_norm_symmetrical(double h, double l);
+double cF2_symmetrical(double h, double l);
 
-/**
- * @brief Расчет функции E_{s1,s2}(h, l)*exp(-2h-l) (см. текст).
- * Симметричный случай, при котором hi = hj = h.
- */
-double E_norm_symmetrical(bool arg_s1, bool arg_s2, double h, double l);
+double E_norm_symmetrical(double h, double l, bool arg_s1, bool arg_s2);
+double E_symmetrical(double h, double l, bool arg_s1, bool arg_s2);
 
 /**
  * @brief Структура для решение прямой и обратной задач для 
- * двухчастичной статистической суммы в симметричном случае,
- * при котором hi = hj = h.
+ * двухчастичной статистической суммы в симметричном случае.
  * Ограничения: eta >= m*m, l >= 0.
  */
 struct Z2_symmetrical {

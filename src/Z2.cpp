@@ -22,6 +22,7 @@ inline double invL(double M) {
     return p;
 }
 
+// ----------------------------------------------------------------------------------------
 
 double cF2_norm_symmetrical(double h, double l) {
     double result = 0;
@@ -35,17 +36,32 @@ double cF2_norm_symmetrical(double h, double l) {
     return result;
 }
 
-double E_norm_symmetrical(bool arg_s1, bool arg_s2, double h, double l) {
+double cF2_symmetrical(double h, double l) {
+    return cF2_norm_symmetrical(h, l) * exp(2 * h + l);
+}
+
+double E_norm_symmetrical(double h, double l, bool arg_s1, bool arg_s2) {
     double result = 0;
     for (int is1 = 0; is1 < 2; is1++)
         for (int is2 = 0; is2 < 2; is2++) {
-            int s1 = arg_s1 ? SIGMAS[is1] : 1;
-            int s2 = arg_s2 ? SIGMAS[is2] : 1;
-            result += s1 * s2 * exp((s1 + s2 - 2) * h + (s1 * s2 - 1) * l);
+            int s1 = SIGMAS[is1];
+            int s2 = SIGMAS[is2];
+            
+            int factor = 1;
+            factor *= arg_s1 ? s1 : 1;
+            factor *= arg_s2 ? s2 : 1;
+
+            result += factor * exp((s1 + s2 - 2) * h + (s1 * s2 - 1) * l);
         }
 
     return result;
 }
+
+double E_symmetrical(double h, double l, bool arg_s1, bool arg_s2) {
+    return E_norm_symmetrical(h, l, arg_s1, arg_s2) * exp(2 * h + l);
+}
+
+// ----------------------------------------------------------------------------------------
 
 void Z2_symmetrical::calc_base() {
     _h = fabs(h) > 1e-3 ? 1 / h : NAN;
@@ -130,6 +146,8 @@ void Z2_symmetrical::calc_Z2_norm() {
         Z2_norm  = Z * (1 + h * m);
     }
 }
+
+// ----------------------------------------------------------------------------------------
 
 void Z2_symmetrical::calc_from_coeffs() {
     calc_base();

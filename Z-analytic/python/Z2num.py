@@ -1,11 +1,20 @@
 """
 Численный расчет двухчастичной статистической суммы.
 """
-from Z2backend import cF2_norm_symmetrical, E_norm_symmetrical, Z2_symmetrical
+from Z2backend import *
 import scipy.optimize as opt
 import numpy as np
+from scipy.special import i0
+from scipy.integrate import quad
 
 _z2 = Z2_symmetrical()
+
+
+def calc_from_coeffs_symmetrical(h, l):
+    """Функциональная обертка над Z2_symmetrical.calc_from_coeffs. Возвращает объект класса Z2_symmetrical."""
+    _z2.h, _z2.l = h, l
+    _z2.calc_from_coeffs()
+    return _z2
 
 
 def coeffs_symmetrical_approx(m, eta):
@@ -25,13 +34,6 @@ def coeffs_symmetrical_approx(m, eta):
                                                       * m + (-.123 * m - 1.041 + (0.858 - 0.356 * zeta) * zeta) * zeta)
 
     return rho * m / mu_p, (1 - rho) / upsilon
-
-
-def calc_from_coeffs_symmetrical(h, l):
-    """Функциональная обертка над Z2_symmetrical.calc_from_coeffs. Возвращает объект класса Z2_symmetrical."""
-    _z2.h, _z2.l = h, l
-    _z2.calc_from_coeffs()
-    return _z2
 
 
 def find_coeffs_symmetrical(m, eta):
@@ -57,3 +59,11 @@ def find_coeffs_symmetrical_by_scipy(m, eta):
     _z2.h, _z2.l = coeffs
     _z2.calc_from_coeffs()
     return _z2
+
+# ------------------------------------------------------------
+
+def calc_Z2_integrate(hi_y, hi_z, hj, l):
+    """Расчет статистической суммы двухчастичной функции распределения общего вида с помощью интегрирования."""
+    def _sqrt(x): return np.sqrt(hj**2+l**2+2*hj*l*np.cos(x))
+    def func(x): return i0(hi_y*np.sin(x))*np.exp(hi_z*np.cos(x))*np.sinh(_sqrt(x))/_sqrt(x)*np.sin(x)
+    return 2*(2*np.pi)**2*quad(func, 0, np.pi)[0]

@@ -3,12 +3,14 @@ import numba as nb
 
 
 def single_and_vectorize(func):
-    return nb.njit(func), nb.vectorize([nb.float64(*[nb.float64]*func.__code__.co_argcount)], target="parallel")(func)
+    return nb.njit(func, cache=True), nb.vectorize([nb.float64(*[nb.float64]*func.__code__.co_argcount)], target="parallel", cache=True)(func)
 
 
 # ======================================== MOMENTS ========================================
-def calc_Z1(p):
-    return 4*np.pi*np.sinh(p)/p
+def calc_Z1_norm(p):
+    if p == 0:
+        return 0
+    return 2*np.pi*(1-np.exp(-2*p))/p
 
 
 def calc_m(p):
@@ -17,13 +19,12 @@ def calc_m(p):
     return 1/np.tanh(p)-1/p
 
 
-_, calc_Z1 = single_and_vectorize(calc_Z1)
-calc_m_single, calc_m_vectorize = single_and_vectorize(calc_m)
-calc_m = calc_m_vectorize
+calc_Z1_norm_single, calc_Z1_norm = single_and_vectorize(calc_Z1_norm)
+calc_m_single, calc_m = single_and_vectorize(calc_m)
 
 
 # ======================================== FINDING ========================================
-@nb.njit
+@nb.njit(cache=True)
 def mu_p_approx(m):
     m2 = m * m
     mu_p_arg = m * ((0.775383) + ((0.109185) + ((0.289114) + ((-0.871214) + ((1.85968) + ((-1.71306) + (0.550912) * m2) * m2) * m2) * m2) * m2) * m2)
@@ -31,12 +32,12 @@ def mu_p_approx(m):
     return mu_p
 
 
-@nb.njit
+@nb.njit(cache=True)
 def coeffs_approx(m):
     return m / mu_p_approx(m)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def find_coeffs_single(m, eps=1e-8):
     if m == 0:
         return 0
@@ -64,7 +65,7 @@ def find_coeffs_single(m, eps=1e-8):
     return p
 
 
-@nb.njit(parallel=True)
+@nb.njit(parallel=True, cache=True)
 def find_coeffs_vectorize(m, eps=1e-8):
     p = np.empty_like(m)
 
