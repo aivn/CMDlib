@@ -5,13 +5,12 @@
 
 #include "../include/Z2.hpp"
 
-using namespace Z2_symmetrical;
 
 int main() {
-    assert(fabs(cF2_norm(1, 2) - 0.21313592158965938) < 1e-6);
-    assert(fabs(E_norm(1, 1, 1, 2) - 1.0133581345354015) < 1e-5);
+    assert(fabs(cF2_norm_symmetrical(1, 2) - 0.21313592158965938) < 1e-6);
+    assert(fabs(E_norm_symmetrical(1, 1, 1, 2) - 1.0133581345354015) < 1e-5);
 
-    Z2 z2 = Z2();
+    Z2_symmetrical z2 = Z2_symmetrical();
 
     z2.h = 1;
     z2.l = 2;
@@ -39,7 +38,6 @@ int main() {
     double N    = 100;
     double step = (max - min) / N;
 
-    // 0.0107152 0.0912011 0.00368028 0.0304131 0.430377
     std::cout << "#:h l m eta zeta steps upsilon eta2 m_par_2 psi0 Z2_norm" << '\n';
     for (int i = 0; i <= N; i++) {
         for (int j = 0; j <= N; j++) {

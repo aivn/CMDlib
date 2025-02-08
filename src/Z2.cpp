@@ -22,8 +22,8 @@ inline double invL(double M) {
     return p;
 }
 
-namespace Z2_symmetrical {
-double cF2_norm(double h, double l) {
+
+double cF2_norm_symmetrical(double h, double l) {
     double result = 0;
     for (int is1 = 0; is1 < 2; is1++)
         for (int is2 = 0; is2 < 2; is2++) {
@@ -35,7 +35,7 @@ double cF2_norm(double h, double l) {
     return result;
 }
 
-double E_norm(bool arg_s1, bool arg_s2, double h, double l) {
+double E_norm_symmetrical(bool arg_s1, bool arg_s2, double h, double l) {
     double result = 0;
     for (int is1 = 0; is1 < 2; is1++)
         for (int is2 = 0; is2 < 2; is2++) {
@@ -47,7 +47,7 @@ double E_norm(bool arg_s1, bool arg_s2, double h, double l) {
     return result;
 }
 
-void Z2::calc_base() {
+void Z2_symmetrical::calc_base() {
     _h = fabs(h) > 1e-3 ? 1 / h : NAN;
     _l = l > 1e-3 ? 1 / l : NAN;
 
@@ -71,7 +71,7 @@ void Z2::calc_base() {
     eta_prmg = l > 1e-3 ? (1 + _exp_2l) / (1 - _exp_2l) - _l : l / 3;
 }
 
-void Z2::calc_m() {
+void Z2_symmetrical::calc_m() {
     if (fabs(h) > 1e-2 && l > 1e-1) {
         m   = -.25 * (-M_SQRT2 * E12_norm * h * l + 2 * cF2_norm * h * h * sqrt_l + 2 * cF2_norm * l * sqrt_l) / (cF2_norm * h * l * sqrt_l);
         m_h = m * _h;
@@ -84,13 +84,13 @@ void Z2::calc_m() {
     }
 }
 
-void Z2::calc_eta() {
+void Z2_symmetrical::calc_eta() {
     if (fabs(h) > 1e-2 && l > 1e-1) eta = .25 * (-M_SQRT2 * E12_norm * h * l * l + 2 * M_SQRT2 * E1_norm * l * l * l + 2 * cF2_norm * h * h * l * sqrt_l - 4 * cF2_norm * l * l * l * sqrt_l - 2 * cF2_norm * l * l * sqrt_l) / (cF2_norm * l * l * l * sqrt_l);
     else if (l <= 1e-1) eta = m_llb * m_llb + l * (1 - m_llb * m_llb * m_llb * m_llb + 6 * m_h_llb * m_h_llb - 4 * m_h_llb);
     else eta = eta_prmg;  // fabs(h) <= 1e-2
 }
 
-void Z2::calc_upsilon() {
+void Z2_symmetrical::calc_upsilon() {
     if (l <= 1e-2 || (fabs(h) <= 1e-1 && l < .1)) {
         double tmp = fabs(h) > 1e-2 ? -9 * m_h_llb * _h * _h + 6 * _h * _h - _h / m_llb : 0;
         upsilon    = m_h_llb + l * (-m_llb * m_llb * m_h_llb + m_llb * m_llb / 2 - 4 * m_h_llb * m_h_llb + 3 * m_h_llb - .5 + tmp);
@@ -104,7 +104,7 @@ void Z2::calc_upsilon() {
     }
 }
 
-void Z2::calc_eta2() {
+void Z2_symmetrical::calc_eta2() {
     if (l > 1e-2) eta2 = 1 + 2 * _l * (h * m * upsilon - eta);
     else if (l <= 1e-2) {
         double tmp = fabs(h) > 1e-1 ? 90 * m_h_llb * m_h_llb * _h * _h - 60 * m_h_llb * _h * _h + 10 * _h * _h : 0;
@@ -112,15 +112,15 @@ void Z2::calc_eta2() {
     }
 }
 
-void Z2::calc_m_par_2() {
+void Z2_symmetrical::calc_m_par_2() {
     m_par_2 = 1 - 2 * m_h + 2 * l * m_h * upsilon;
 }
 
-void Z2::calc_psi0() {
+void Z2_symmetrical::calc_psi0() {
     psi0 = 1.5 * m_h * upsilon + .25 * (eta2 - 1);
 }
 
-void Z2::calc_Z2_norm() {
+void Z2_symmetrical::calc_Z2_norm() {
     if (fabs(h) > 1e-1 && l > 1e-1) Z2_norm = M_SQRT2 * (2 * M_PI) * (2 * M_PI) * _h * _sqrt_l * cF2_norm;
     else if (l <= 1e-1) {
         double Z = 4 * M_PI * (fabs(h) > 1e-1 ? (1 - _exp_2h) * _h : exp(-h) * (1 + h * h / 6));
@@ -131,7 +131,7 @@ void Z2::calc_Z2_norm() {
     }
 }
 
-void Z2::calc_from_coeffs() {
+void Z2_symmetrical::calc_from_coeffs() {
     calc_base();
     calc_m();
     calc_eta();
@@ -143,7 +143,7 @@ void Z2::calc_from_coeffs() {
     if (eta < m*m || eta2 > 1) m = eta = upsilon = eta2 = m_par_2 = psi0 = NAN;
 }
 
-int Z2::calc_from_moments(double h0, double l0, double eps, int max_steps) {
+int Z2_symmetrical::calc_from_moments(double h0, double l0, double eps, int max_steps) {
     int steps = 0;
 
     if (eta < m * m) h = l = NAN;
@@ -197,11 +197,4 @@ int Z2::calc_from_moments(double h0, double l0, double eps, int max_steps) {
 
     return steps;
 }
-}  // namespace Z2_symmetrical
 
-
-namespace test{
-    double test_func(){
-        return 1.;
-    }
-}

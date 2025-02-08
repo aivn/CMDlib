@@ -10,25 +10,24 @@
 #define CMDLIB_Z2_HPP
 
 /**
- * @brief Симметричный случай, при котором hi = hj = h.
- */
-namespace Z2_symmetrical {
-/**
  * @brief Расчет функции cF2(h, l)*exp(-2h-l) (см. текст).
+ * Симметричный случай, при котором hi = hj = h.
  */
-double cF2_norm(double h, double l);
+double cF2_norm_symmetrical(double h, double l);
 
 /**
  * @brief Расчет функции E_{s1,s2}(h, l)*exp(-2h-l) (см. текст).
+ * Симметричный случай, при котором hi = hj = h.
  */
-double E_norm(bool arg_s1, bool arg_s2, double h, double l);
+double E_norm_symmetrical(bool arg_s1, bool arg_s2, double h, double l);
 
 /**
  * @brief Структура для решение прямой и обратной задач для 
- * двухчастичной статистической суммы в симметричном случае.
+ * двухчастичной статистической суммы в симметричном случае,
+ * при котором hi = hj = h.
  * Ограничения: eta >= m*m, l >= 0.
  */
-struct Z2 {
+struct Z2_symmetrical {
 private:
     double _h, _l, sqrt_l, _sqrt_l;
     double _exp_2h, _exp_2l;
@@ -76,6 +75,5 @@ public:
      */
     int calc_from_moments(double h0, double l0, double eps = 1e-8, int max_steps = 64);
 };
-}  // namespace Z2_symmetrical
 
 #endif  // CMDLIB_Z2_HPP
