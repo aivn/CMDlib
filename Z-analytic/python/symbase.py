@@ -30,3 +30,19 @@ def eval_sum_direct(expr, recursive=1):
     
     expr = expr.replace(sp.Sum, func)
     return eval_sum_direct(expr, recursive-1)
+
+
+def collect_sigmas(expr, terms, sigmas):
+    """Разделяет выражение по заданным terms, после чего дополнительно разделяет по степеням заданных sigmas."""
+    dummy_subs = dict(zip(terms, [sp.Dummy() for _ in range(len(terms))]))
+    expr = expr.expand().subs(dummy_subs)
+
+    result = sp.collect(expr, dummy_subs.values(), evaluate=False)
+    for dummy in dummy_subs.values():
+        if dummy in result:
+            result[dummy] = sp.Poly(result[dummy], sigmas).as_dict()
+    for key, dummy in dummy_subs.items():
+        if dummy in result:
+            result[key] = result.pop(dummy)
+
+    return result

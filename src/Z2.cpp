@@ -128,8 +128,8 @@ void Z2_symmetrical::calc_eta2() {
     }
 }
 
-void Z2_symmetrical::calc_m_par_2() {
-    m_par_2 = 1 - 2 * m_h + 2 * l * m_h * upsilon;
+void Z2_symmetrical::calc_mh2() {
+    mh2 = 1 - 2 * m_h + 2 * l * m_h * upsilon;
 }
 
 void Z2_symmetrical::calc_psi0() {
@@ -155,10 +155,10 @@ void Z2_symmetrical::calc_from_coeffs() {
     calc_eta();
     calc_upsilon();
     calc_eta2();
-    calc_m_par_2();
+    calc_mh2();
     calc_psi0();
     calc_Z2_norm();
-    if (eta < m*m || eta2 > 1) m = eta = upsilon = eta2 = m_par_2 = psi0 = NAN;
+    if (eta < m*m || eta2 > 1) m = eta = upsilon = eta2 = mh2 = psi0 = NAN;
 }
 
 int Z2_symmetrical::calc_from_moments(double h0, double l0, double eps, int max_steps) {

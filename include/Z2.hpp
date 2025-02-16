@@ -37,7 +37,7 @@ private:
     void calc_eta();
     void calc_upsilon();
     void calc_eta2();
-    void calc_m_par_2();
+    void calc_mh2();
     void calc_psi0();
     void calc_Z2_norm();
 
@@ -45,7 +45,7 @@ public:
     double h, l;
     double m, eta;
     double m_eta, upsilon, eta2;
-    double m_par_2, psi0;
+    double mh2, psi0;
     double Z2_norm;
 
     /**
