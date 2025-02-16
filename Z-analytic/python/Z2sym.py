@@ -56,6 +56,17 @@ class F2(sp.Function):
             return -cls(-z)
         if z == 0:
             return 0
+        
+
+def dawsn_to_series_oo(expr, N):
+    """Асимптотика функции Доусона на бесконечности."""
+    def func(*args):
+        z = args[0]
+        result = 0
+        for n in range(N):
+            result += sp.factorial2(2*n-1)/(2**(n+1)*z**(2*n+1))
+        return result
+    return expr.replace(F2, func)
 
 
 # ===================================== Для symbase.collect_sigmas =====================================

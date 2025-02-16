@@ -46,7 +46,7 @@ double E_norm_symmetrical(double h, double l, bool arg_s1, bool arg_s2) {
         for (int is2 = 0; is2 < 2; is2++) {
             int s1 = SIGMAS[is1];
             int s2 = SIGMAS[is2];
-            
+
             int factor = 1;
             factor *= arg_s1 ? s1 : 1;
             factor *= arg_s2 ? s2 : 1;
@@ -64,11 +64,11 @@ double E_symmetrical(double h, double l, bool arg_s1, bool arg_s2) {
 // ----------------------------------------------------------------------------------------
 
 void Z2_symmetrical::calc_base() {
-    _h = fabs(h) > 1e-3 ? 1 / h : NAN;
-    _l = l > 1e-3 ? 1 / l : NAN;
+    _h = fabs(h) > 1e-4 ? 1 / h : NAN;
+    _l = l > 1e-4 ? 1 / l : NAN;
 
     sqrt_l  = sqrt(l);
-    _sqrt_l = sqrt_l > 1e-3 ? 1 / sqrt_l : NAN;
+    _sqrt_l = sqrt_l > 1e-4 ? 1 / sqrt_l : NAN;
 
     _exp_2l = exp(-2 * l);
     _exp_2h = exp(-2 * h);
@@ -82,9 +82,9 @@ void Z2_symmetrical::calc_base() {
         E_norm   = _exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1;
     } else sqrt_l = _sqrt_l = cF2_norm = E12_norm = E1_norm = E_norm = NAN;
 
-    m_llb    = fabs(h) > 1e-3 ? (1 + _exp_2h) / (1 - _exp_2h) - _h : h / 3;
-    m_h_llb  = fabs(h) > 1e-3 ? m_llb * _h : 1. / 3.;
-    eta_prmg = l > 1e-3 ? (1 + _exp_2l) / (1 - _exp_2l) - _l : l / 3;
+    m_llb    = fabs(h) > 1e-4 ? (1 + _exp_2h) / (1 - _exp_2h) - _h : h / 3;
+    m_h_llb  = fabs(h) > 1e-4 ? m_llb * _h : 1. / 3.;
+    eta_prmg = l > 1e-4 ? (1 + _exp_2l) / (1 - _exp_2l) - _l : l / 3;
 }
 
 void Z2_symmetrical::calc_m() {
@@ -108,7 +108,7 @@ void Z2_symmetrical::calc_eta() {
 
 void Z2_symmetrical::calc_upsilon() {
     if (l <= 1e-2 || (fabs(h) <= 1e-1 && l < .1)) {
-        double tmp = fabs(h) > 1e-2 ? -9 * m_h_llb * _h * _h + 6 * _h * _h - _h / m_llb : 0;
+        double tmp = fabs(h) > 1e-4 ? -9 * m_h_llb * _h * _h + 6 * _h * _h - _h / m_llb : 0;
         upsilon    = m_h_llb + l * (-m_llb * m_llb * m_h_llb + m_llb * m_llb / 2 - 4 * m_h_llb * m_h_llb + 3 * m_h_llb - .5 + tmp);
         m_eta      = m * (1 - 2 * upsilon);
     } else if (fabs(h) <= 1e-2 || (fabs(h) <= 1e-1 && l < .5)) {
@@ -137,12 +137,12 @@ void Z2_symmetrical::calc_psi0() {
 }
 
 void Z2_symmetrical::calc_Z2_norm() {
-    if (fabs(h) > 1e-1 && l > 1e-1) Z2_norm = M_SQRT2 * (2 * M_PI) * (2 * M_PI) * _h * _sqrt_l * cF2_norm;
-    else if (l <= 1e-1) {
-        double Z = 4 * M_PI * (fabs(h) > 1e-1 ? (1 - _exp_2h) * _h : exp(-h) * (1 + h * h / 6));
-        Z2_norm  = Z * (1 + l * eta);
-    } else {  // fabs(h) <= 1e-1
-        double Z = 4 * M_PI * (l > 1e-1 ? (1 - _exp_2l) * _l : exp(-l) * (1 + l * l / 6));
+    if (fabs(h) > 1e-2 && l > 1e-2) Z2_norm = M_SQRT2 * (2 * M_PI) * (2 * M_PI) * cF2_norm / (h * sqrt_l);
+    else if (l <= 1e-2) {
+        double Z = 4 * M_PI * (fabs(h) > 1e-4 ? .5 * (1 - _exp_2h) * _h : exp(-h) * (1 + h * h / 6));
+        Z2_norm  = Z * Z * (1 + l * eta);
+    } else {  // fabs(h) <= 1e-2
+        double Z = (4 * M_PI) * (4 * M_PI) * (l > 1e-4 ? .5 * (1 - _exp_2l) * _l : exp(-l) * (1 + l * l / 6));
         Z2_norm  = Z * (1 + h * m);
     }
 }
@@ -158,7 +158,7 @@ void Z2_symmetrical::calc_from_coeffs() {
     calc_mh2();
     calc_psi0();
     calc_Z2_norm();
-    if (eta < m*m || eta2 > 1) m = eta = upsilon = eta2 = mh2 = psi0 = NAN;
+    if (eta < m * m || eta2 > 1) m = eta = upsilon = eta2 = mh2 = psi0 = NAN;
 }
 
 int Z2_symmetrical::calc_from_moments(double h0, double l0, double eps, int max_steps) {
