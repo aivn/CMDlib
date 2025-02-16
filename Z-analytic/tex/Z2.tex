@@ -1,0 +1,302 @@
+\documentclass[12pt]{article}
+
+% Disabling character scaling in formulas.
+\everymath{\displaystyle}
+
+% Extended Cyrillic support.
+\usepackage[T1,T2A]{fontenc}
+
+% Encoding.
+\usepackage[utf8]{inputenc}
+
+% Russian language support.
+\usepackage[russian]{babel}
+
+% Indenting the first paragraph of a chapter.
+\usepackage{indentfirst}
+
+% References.
+\usepackage{cite} 
+
+% Graphicx.
+\usepackage{graphicx} 
+
+% Style of table of content.
+\usepackage{tocloft}
+\renewcommand\cftsecdotsep{\cftdotsep}
+
+% Hyperrefs.
+\usepackage{hyperref} 
+\hypersetup{colorlinks=true,linkcolor=blue,filecolor=blue,citecolor=blue,urlcolor=blue}
+
+% Geometry.
+\usepackage[left=15mm, right=15mm, top=20mm, bottom=20mm]{geometry}
+
+% Math.
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{mathtext}
+\usepackage{systeme, mathtools}
+\usepackage{cancel}
+
+\def\m{\mathbf m{}}
+\def\n{\mathbf n{}}
+\def\k{\mathbf k{}}
+\def\g{\mathbf g{}}
+\def\p{\mathbf p{}}
+\def\r{\mathbf r{}}
+\def\a{\mathbf a{}}
+\def\P{{\widehat P}}
+\def\h{{\bf h}}
+
+\def\fI{f^{(1)}}
+\def\fV{f^{(2)}}
+\def\fW{f^{(3)}}
+\def\fN{f^{(N)}}
+
+\def\sr#1{\left<#1\right>}
+
+\def\ZS{Z^{(1)}}
+\def\ZV{Z^{(2)}}
+\def\ZW{Z^{(3)}}
+\def\ZN{Z^{(N)}}
+
+\def\FS{F^{(1)}}
+\def\FV{F^{(2)}}
+\def\FW{F^{(3)}}
+\def\cFS{{\cal F}^{(1)}}
+\def\cFV{{\cal F}^{(2)}}
+\def\cFW{{\cal F}^{(3)}}
+
+\def\IS{\int\limits_{S_2}}
+\def\IIS{\iint\limits_{S_2}}
+\def\IIIS{\iiint\limits_{S_2}}
+\def\ISN{\idotsint\limits_{S_2\,\dots\,S_2}}
+
+\def\L{{\mathcal L}}
+\def\Z{{\mathcal Z}}
+\def\Y{{\mathcal Y}}
+\def\Q{{\mathcal Q}}
+\def\D{{\mathcal D}}
+
+\def\PHI{{\boldsymbol \Phi}}
+\def\THETA{{\boldsymbol \Theta}}
+\def\XI{\widehat\Xi}
+\def\Mu{{\boldsymbol \mu}}
+
+\def\grad{\hbox{grad}}
+\def\erfi{{\hbox{erfi}}}
+
+\begin{document}
+\section*{Расчет $\ZV$ для ферромагнетика}
+\subsection*{Выражение для статсуммы}
+
+По определению в общем виде
+\begin{equation}\label{Z2::def}
+    \ZV (\h_i^{(2)}, \h_j^{(2)}, \lambda^{(2)}) = \IIS \exp\left(\h_i^{(2)}\cdot\m_i+\h_j^{(2)}\cdot\m_j+\lambda^{(2)}\m_i\cdot\m_j\right)\,d\m_i\,d\m_j,
+\end{equation}
+где $\h_i^{(2)}$, $\h_j^{(2)}$ и $\lambda^{(2)}$~---~параметры. Далее верхний индекс мы опустим. Перепишем как интегрирование по $\Z$:
+\begin{equation}
+    \ZV (\h_i, \h_j, \lambda) = \IS e^{\h_i\m_i}\,d\m_i \IS e^{\h_j\cdot\m_j+\lambda\m_i\cdot\m_j}\,d\m_j =  \IS e^{\h_i\m_i}\Z(\left| \h_j+\lambda\m_i \right|)\,d\m_i.
+\end{equation}
+
+Пусть $\h_i = \h_i^\parallel + \h_i^\perp$, где $\h_i^\parallel \parallel \h_j$, а $\h_i^\perp \perp \h_j$. Тогда
+
+\begin{equation}\label{Z2::infeld}
+    \ZV (h_i^\perp, h_i^\parallel, h_j, \lambda) = 2\pi\int\limits_0^\pi I_0(h_i^\perp \sin \theta) e^{h_i^\parallel\cos \theta} \Z\left(\sqrt{h_j^2+\lambda^2+2h_j\lambda\cos \theta}\right)\sin \theta\,d\theta,
+\end{equation}
+где $I_0(x)$ -- функция Инфельда. 
+
+Мы будем рассматривать ферромагнетик, для которого $\h_1^\perp = 0$, $\h_1^\parallel = \h_2 = \h$ и $\lambda > 0$. Тогда
+ 
+\begin{equation}
+    \ZV (h, \lambda) = 2\pi\int\limits_{-1}^1 e^{hx} \Z\left( \sqrt{h^2+\lambda^2+2h\lambda x} \right)\,dx.
+\end{equation}
+
+Сделаем замену $t=\sqrt{h^2+\lambda^2+2h\lambda x}$, $h\lambda\neq0$, тогда
+\begin{equation}
+  \ZV = \frac{2\pi}{h\lambda} \exp\left(-\frac{h^2+\lambda^2}{2\lambda}\right) \int\limits_{|h-\lambda|}^{|h+\lambda|} \exp\left({\frac{t^2}{2\lambda}}\right)t\ZS(t)\,dt.
+\end{equation}
+
+Перепишем $\ZS$ в следующей форме:
+\begin{equation}
+  \ZS (p) = \IS e^{\p\m}\,d\m = 4\pi\frac{\sh p}{p} =  \frac{2\pi}{p} \sum\limits_{\sigma_1} \sigma_1e^{\sigma_1p} \FS(p) \equiv \frac{2\pi}{p} \cFS(p),
+\end{equation}
+где $\FS(p) \equiv 1$ и $\sigma \in \{-1, 1\}$. Тогда
+\begin{equation}
+  \ZV = \frac{\left(2\pi\right)^2}{h\lambda} \exp\left(-\frac{h^2+\lambda^2}{2\lambda}\right) \int\limits_{h-\lambda}^{h+\lambda} \exp\left({\frac{t^2}{2\lambda}}\right)\cFS(t)\,dt.
+\end{equation}
+Модули в пределах интегрирования были опущены, поскольку $\cFS(t)$ нечетная функция.
+
+Далее, 
+\begin{equation}
+  \int\limits_{h-\lambda}^{h+\lambda} \exp\left({\frac{t^2}{2\lambda}}+\sigma_1t\right)\,dt
+  =
+  e^{-\frac{\lambda}{2}}\int\limits_{h-\lambda}^{h+\lambda} \exp\left(\frac{1}{2\lambda} \left(t+\sigma_1\lambda\right)^2\right)\,dt
+  =
+  \sqrt{2\lambda}e^{-\frac{\lambda}{2}}\sum\limits_{\sigma_2} \sigma_2 \int\limits_{0}^{\frac{h+(\sigma_1+\sigma_2)\lambda}{\sqrt{2\lambda}}} e^{t^2}\,dt.
+\end{equation}
+
+Пусть
+\begin{equation}
+  \FV(x) \equiv e^{-x^2}\int\limits_0^xe^{t^2}\FS(t)\,dt.
+\end{equation}
+Нетрудно видеть, что $\FV(x)$ по определению является интегралом Доусона.
+
+Получаем
+\begin{equation}
+    \ZV (h, \lambda) = \frac{\sqrt{2}\left(2\pi\right)^2}{h\sqrt{\lambda}}  \cFV(h, \lambda).
+\end{equation}
+\begin{equation}
+    \cFV(h, \lambda) \equiv \sum\limits_{\sigma_{1,2}} \sigma_1\sigma_2\exp\left({(\sigma_1+\sigma_2)h+\sigma_1\sigma_2\lambda}\right)\FV\left(\frac{h+(\sigma_1+\sigma_2)\lambda}{\sqrt{2\lambda}}\right).
+\end{equation}
+
+Для расчета некоторых коэффициентов нам потребуется выражение для $\ZV$ в несимметричном случае: $\h_i^\perp = 0$, $\h_i^\parallel \neq \h_j$, но $(\h_i \cdot \h_j) \lambda > 0$. Переобозначив $h_i^\parallel \equiv h_i$, аналогично
+\begin{equation}\label{Z2::nonsym}
+    \ZV (h_i, h_j, \lambda) = \frac{\sqrt{2}\left(2\pi\right)^2}{\sqrt{h_ih_j\lambda}} \cFV(h_i, h_j, \lambda),
+\end{equation}
+\begin{equation}
+    \cFV(h_i, h_j, \lambda) \equiv \sum\limits_{\sigma_{1,2}} \sigma_1\sigma_2\exp\left({\sigma_1h_i+\sigma_2h_j+\sigma_1\sigma_2\lambda}\right)\FV\left(\sqrt{\frac{h_i}{h_j}}\frac{h_j+\sigma_1\lambda+\sigma_2\lambda\frac{h_j}{h_i}}{\sqrt{2\lambda}}\right).
+\end{equation}
+Это выражение будет верным и для антиферромагнетика, поскольку при $\lambda < 0$ также $(\h_i~\cdot~\h_j)~<~0$.
+
+\subsection*{Система уравнений на первые моменты двухчастичной функции распределения}
+Производная $\FV(x)$:
+\begin{equation}
+  \frac{d \FV(x)}{dx} = 1 - 2x\FV(x).
+\end{equation}
+
+Также найдем производные $\cFV(h, \lambda)$. Введем
+\begin{equation}
+    {\cal E}_{\{i\}}(h, \lambda) = \sum\limits_{\sigma_{1,2}} \prod\limits_{i\in\{i\}} \sigma_i  \cdot e^{{(\sigma_1+\sigma_2)h+\sigma_1\sigma_2\lambda}},
+\end{equation}
+тогда
+\begin{equation}
+    \frac{\partial \cFV(h, \lambda)}{\partial h} = -\frac{h}{\lambda}\cFV(h, \lambda)+ \frac{1}{\sqrt{2\lambda}} {\cal E}_{12}(h, \lambda),
+\end{equation}
+\begin{equation}
+    \frac{\partial \cFV(h, \lambda)}{\partial \lambda} = \left(\frac{h^2}{2\lambda^2}-1\right)\cFV(h, \lambda) - \frac{h}{(2\lambda)^{\frac{3}{2}}} {\cal E}_{12}(h, \lambda) + \frac{1}{\sqrt{2\lambda}} {\cal E}_{1}(h, \lambda).
+\end{equation}
+Здесь мы использовали тот факт, что суммирование по $\sigma_{1,2}$ в $\cFV(h, \lambda)$ симметрично по замене $\sigma_{1}$ на $\sigma_{2}$.
+
+Теперь перейдем к расчету моментов. Имеем
+\begin{equation}
+  \frac{1}{\ZV}\nabla_{\mathbf h{}} \ZV = 2\sr\m = \frac{{\mathbf h{}}}{h}\frac{1}{\ZV}\frac{\partial \ZV}{\partial h} \; \Rightarrow \; \sr m = \frac{1}{2}\frac{\partial \ln\ZV}{\partial h},
+\end{equation}
+\begin{equation}
+  \sr{\eta^n} = \frac{1}{\ZV} \frac{\partial^n \ZV}{\partial \lambda^n}, \quad \sr\eta = \frac{\partial \ln \ZV}{\partial \lambda}, \quad \sr{\eta^2} - {\sr\eta}^2 = \frac{\partial^2 \ln \ZV}{\partial \lambda^2}.
+\end{equation}
+
+Получаем
+\begin{equation}
+  \begin{cases}
+    \displaystyle 
+    \left<m\right> = - \frac{1}{2 h} - \frac{h}{2 \lambda} + \frac{\sqrt{2} {\cal E}_{12}\left(h, \lambda\right)}{4 \sqrt{\lambda} {\cal F}^{(2)}\left(h,\lambda\right)}, 
+    \\
+    \displaystyle 
+    \left<\eta\right> = -1 - \frac{1}{2 \lambda} + \frac{h^{2}}{2 \lambda^{2}} + \frac{\sqrt{2} {\cal E}_{1}\left(h, \lambda\right)}{2 \sqrt{\lambda} {\cal F}^{(2)}\left(h,\lambda\right)} - \frac{\sqrt{2} h {\cal E}_{12}\left(h, \lambda\right)}{4 \lambda^{\frac{3}{2}} {\cal F}^{(2)}\left(h,\lambda\right)}.
+  \end{cases}
+\end{equation}
+
+Преобразовав, получим 
+\begin{equation}
+    2{\cal F}^{(2)}\left(h,\lambda\right) = \frac{\sqrt{2\lambda} h {\cal E}_{12}\left(h, \lambda\right)}{2 \lambda \left<m\right> h + \lambda + h^{2}} = \frac{\sqrt{2\lambda} {\cal E}_{1}\left(h, \lambda\right)}{\lambda \left<\eta\right> + \lambda + \left<m\right> h + 1}.
+\end{equation}
+
+Из чего можно получить следующее уравнение на связь $\lambda$ и $h$:
+\begin{equation}
+    \begin{gathered}
+        a\lambda+be^{-2\lambda}+c\lambda e^{-2\lambda} + d = 0, \quad b=- \frac{\left<m\right> h^{2}}{\ch\left(2 h\right)} - \frac{h}{\ch\left(2 h\right)}, \quad c = - \frac{\left<\eta\right> h}{\ch\left(2 h\right)} - \frac{h}{\ch\left(2 h\right)}
+        ,
+        \\ 
+        a = \left<\eta\right> h - 2 \left<m\right> h \tanh{\left(2 h \right)} + h - \tanh{\left(2 h \right)}, 
+        \quad
+        d = \left<m\right> h^{2} - h^{2} \tanh{\left(2 h \right)} + h.
+    \end{gathered}
+\end{equation}
+
+\subsection*{Старшие моменты двухчастичной функции распределения}
+Теперь найдем моменты $\sr{\eta^2}$ и $\Upsilon$. Поскольку
+\begin{equation}
+    \sr{\eta^2} = \frac{1}{\ZV} \frac{\partial^2 \ZV(h, \lambda)}{\partial \lambda^2}, \quad \sr m \Upsilon = \frac{1}{4\ZV}\left(\frac{\partial \ZV(h, \lambda)}{\partial h} - \frac{\partial^2 \ZV(h, \lambda)}{\partial h \partial\lambda}\right),
+\end{equation}
+то
+\begin{equation}
+    \sr{\eta^2} - 1 = \sr\eta\frac{h^{2} - 3 \lambda}{2 \lambda^{2}} + \left<m\right>\frac{h \left(\lambda + 1\right)}{\lambda^{2}} + \frac{1}{2 \lambda^{2}} - \frac{\left(2 \lambda \left<m\right> h + \lambda + h^{2}\right)}{2 \lambda^{2}}\frac{{\cal E}_{}\left(h, \lambda\right)}{{\cal E}_{12}\left(h, \lambda\right)},
+\end{equation}
+
+\begin{equation}
+    \sr m \Upsilon \equiv \frac{1}{2}\left(\sr m - \sr{m\eta}\right) = \left<\eta\right> \frac{h^{2} + \lambda}{4 \lambda h} + \left<m\right>\frac{\lambda + 1}{2 \lambda} + \frac{1}{4 \lambda h} - \frac{\left(2 \lambda \left<m\right> h + \lambda + h^{2}\right)}{4 \lambda h}\frac{{\cal E}_{}\left(h, \lambda\right)}{{\cal E}_{12}\left(h, \lambda\right)}.
+\end{equation}
+
+Легко получить связь этих двух моментов:
+\begin{equation}
+    \frac{\lambda}{2} \left(\left<\eta^{2}\right> - 1\right) = h \left<m\right> \Upsilon - \left<\eta\right>.
+\end{equation}
+
+Также рассмотрим момент $\sr{m_h^2} \equiv \sr{(\m \cdot \n_h)^2}, \n_h \equiv \frac{\h}{h}$. Поскольку $\sr{(\m_i \cdot \n_h)(\m_j \cdot \n_h)} \neq \sr\eta$, то для нахождения этого момента необходимо использовать выражение статистической суммы в несимметричном случае~(\ref{Z2::nonsym}):
+\begin{equation}
+    \sr{m_h^2} = \frac{1}{\ZV} \frac{\partial^2 \ZV(h_i, h_j, \lambda)}{\partial h_i^2}\Big|_{h_i=h_j=h} = 1 - \frac{2 \left<m\right>}{h} + \frac{2\lambda}{h}\sr m \Upsilon.
+\end{equation}
+Этот момент также можно найти из одночастичной функции распределения:
+\begin{equation}
+    \sr{m_p^2} \equiv\frac{\sr{(\m \cdot \p)^2}}{p^2} = 1 - \frac{2 \left<m\right>}{p}.
+\end{equation}
+Если же приравнять эти моменты, то можно получить
+\begin{equation}
+    \Upsilon \approx \frac{1-\rho}{\lambda}.
+\end{equation} 
+
+\subsection*{Старший момент двухчастичной функции распределения, связанный с анизотропией}
+Вклад анизотропии во второе уравнение CMD имеет вид
+\begin{equation*}
+  \Psi = \sr{\eta (\m_i \cdot \n_K)^2} - \sr{(\m_i \cdot \n_K) (\m_j \cdot \n_K)}.
+\end{equation*}
+
+Поскольку
+\begin{equation*}
+    \Psi = \frac{1}{\ZV}\frac{\partial^3 \ZV(\h_i, \h_j, \lambda)}{\partial \gamma_1^2 \partial \lambda} \Big|_{\gamma_1=0, \gamma_2=0} - \frac{1}{\ZV}\frac{\partial^2 \ZV(\h_i, \h_j, \lambda)}{\partial \gamma_1 \partial \gamma_2} \Big|_{\gamma_1=0, \gamma_2=0},
+\end{equation*}
+где
+\begin{equation*}
+    \h_i = \h + \gamma_1 \n_K, \quad \h_j = \h + \gamma_2 \n_K,
+\end{equation*}
+то вводя обозначения
+\begin{equation*}
+    \h_i^\parallel = \frac{(\h_i \cdot \h_j)}{h_j} \frac{\h_j}{h_j}, \quad \h_i^\perp = \h_i - \h_i^\parallel,
+\end{equation*}
+и используя свойства функции Инфельда из выражения (\ref{Z2::infeld}) получим, что
+\begin{equation*}
+    \frac{\partial \ZV (h_i^\perp, h_i^\parallel, h_j, \lambda)}{\partial h_i^\perp} \Big|_{h_i^\perp=0} = 0, \quad \frac{\partial^2 \ZV (h_i^\perp, h_i^\parallel, h_j, \lambda)}{\partial {h_i^\perp}^2} \Big|_{h_i^\perp=0} = \ZV (h_i^\parallel, h_j, \lambda) - \frac{\partial^2 \ZV (h_i^\parallel, h_j, \lambda)}{\partial {h_i^\parallel}^2}.
+\end{equation*}
+Здесь производная по $\ZV$ берется в несимметричном случае. В итоге, с учетом~(\ref{Z2::nonsym}), получаем
+\begin{equation}\label{psi::eq}
+  \Psi = \left(3\frac{(\sr\m \cdot \n_K)^2}{\sr{m}^2} - 1\right)\left(\frac{3 \sr m \Upsilon}{2 h} + \frac{\sr{\eta^2}-1}4\right).
+\end{equation}
+
+\subsection*{Предельные случаи $\lambda \rightarrow 0$ и $h \rightarrow 0$}
+\subsubsection*{Приближение среднего поля}
+В приближение среднего поля $\lambda=0$. Пределы в этом случае находится с помощью асимптотики функции Доусона на бесконечности:
+\begin{equation*}
+    \FV(x) = \frac{1}{2x}+\frac{1}{4x^3}+\dots+\frac{(2n-1)!!}{2^{n+1}x^{2n+1}}+o(x^{-2n-2}).
+\end{equation*}
+
+Тогда
+\begin{equation*}
+    \lim_{\lambda \rightarrow 0} \ZV = \Z(h) \cdot \Z(h), \quad \lim_{\lambda \rightarrow 0} \sr m = \cth(h) - \frac{1}{h} = \L(h), \quad \lim_{\lambda \rightarrow 0} \sr \eta = {\sr m}^2,
+\end{equation*}
+\begin{equation*}
+    \lim_{\lambda \rightarrow 0} \Upsilon = \frac{\sr m}{h}, \quad \lim_{\lambda \rightarrow 0} \sr{\eta^2} - 1 = \frac{6 \left<m\right>^{2}}{h^{2}} - \frac{4 \left<m\right>}{h}.
+\end{equation*}
+ 
+Из полученного выражения для $\sr m$, что $h=p$, или $\rho = 1$. Это также следует из аппроксимации двухчастичной функции распределения при $\lambda = 0$.
+
+\subsubsection*{Парамагнитная фаза}
+В парамагнитной фазе $h=0$. В этом случае пределы находятся с помощью правила Лопиталя. Тогда
+\begin{equation*}
+    \lim_{h \rightarrow 0} \ZV = 4\pi\Z(\lambda), \quad \lim_{h \rightarrow 0} \sr m = 0, \quad \lim_{h \rightarrow 0} \sr \eta = \cth \lambda - \frac{1}{\lambda},
+\end{equation*}
+\begin{equation*}
+    \lim_{h \rightarrow 0} \Upsilon = \frac{\left<\eta\right>}{\lambda \left(\left<\eta\right> + 1\right)}, \quad \lim_{h \rightarrow 0} \sr{\eta^2} = 1 - \frac{2 \left<\eta\right>}{\lambda}, \quad \lim_{h \rightarrow 0} \frac{\sr m}{h} = \frac{1+\sr\eta}{3}.
+\end{equation*}
+
+\end{document}

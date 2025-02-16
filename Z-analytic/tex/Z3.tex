@@ -1,0 +1,472 @@
+\documentclass[12pt]{article}
+
+% Disabling character scaling in formulas.
+\everymath{\displaystyle}
+
+% Extended Cyrillic support.
+\usepackage[T1,T2A]{fontenc}
+
+% Encoding.
+\usepackage[utf8]{inputenc}
+
+% Russian language support.
+\usepackage[russian]{babel}
+
+% Indenting the first paragraph of a chapter.
+\usepackage{indentfirst}
+
+% References.
+\usepackage{cite} 
+
+% Graphicx.
+\usepackage{graphicx} 
+
+% Style of table of content.
+\usepackage{tocloft}
+\renewcommand\cftsecdotsep{\cftdotsep}
+
+% Hyperrefs.
+\usepackage{hyperref} 
+\hypersetup{colorlinks=true,linkcolor=blue,filecolor=blue,citecolor=blue,urlcolor=blue}
+
+% Geometry.
+\usepackage[left=15mm, right=15mm, top=20mm, bottom=20mm]{geometry}
+
+% Math.
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{mathtext}
+\usepackage{systeme, mathtools}
+\usepackage{cancel}
+
+\def\m{\mathbf m{}}
+\def\n{\mathbf n{}}
+\def\k{\mathbf k{}}
+\def\g{\mathbf g{}}
+\def\p{\mathbf p{}}
+\def\r{\mathbf r{}}
+\def\a{\mathbf a{}}
+\def\P{{\widehat P}}
+\def\h{{\bf h}}
+
+\def\fI{f^{(1)}}
+\def\fV{f^{(2)}}
+\def\fW{f^{(3)}}
+\def\fN{f^{(N)}}
+
+\def\sr#1{\left<#1\right>}
+
+\def\ZS{Z^{(1)}}
+\def\ZV{Z^{(2)}}
+\def\ZW{Z^{(3)}}
+\def\ZN{Z^{(N)}}
+
+\def\FS{F^{(1)}}
+\def\FV{F^{(2)}}
+\def\FW{F^{(3)}}
+\def\cFS{{\cal F}^{(1)}}
+\def\cFV{{\cal F}^{(2)}}
+\def\cFW{{\cal F}^{(3)}}
+
+\def\IS{\int\limits_{S_2}}
+\def\IIS{\iint\limits_{S_2}}
+\def\IIIS{\iiint\limits_{S_2}}
+\def\ISN{\idotsint\limits_{S_2\,\dots\,S_2}}
+
+\def\SI{S^{(1)}}
+\def\SV{S^{(2)}}
+\def\SN{S^{(N)}}
+
+\def\L{{\mathcal L}}
+\def\Z{{\mathcal Z}}
+\def\Y{{\mathcal Y}}
+\def\Q{{\mathcal Q}}
+\def\D{{\mathcal D}}
+
+\def\PHI{{\boldsymbol \Phi}}
+\def\THETA{{\boldsymbol \Theta}}
+\def\XI{\widehat\Xi}
+\def\Mu{{\boldsymbol \mu}}
+
+\def\grad{\hbox{grad}}
+\def\erfi{{\hbox{erfi}}}
+
+
+\begin{document}
+\section*{Расчет $\ZW$ для ферромагнетика}
+\subsection*{Выражение для статсуммы}
+По определению
+\begin{equation}
+    \ZW = \IIIS e^{\h_i\cdot\m_i + \h_j\cdot\m_j + \h_k\cdot\m_k + \lambda_{ij}\m_i\cdot\m_j + \lambda_{jk}\m_j\cdot\m_k + \lambda_{ik}\m_i\cdot\m_k} \,d\m_i\,d\m_j\,d\m_k.
+\end{equation}
+
+Аналогичным образом перепишем как интегрирование $\ZV$:
+\begin{equation}
+    \ZW = \int\limits_{\SV}e^{\h_j\m_j} \ZV\left(\h_i+\lambda_{ij}\m_j, \h_k+\lambda_{jk}\m_j, \lambda_{ik}\right)\,d\m_j.
+\end{equation}
+
+Мы будем рассматривать ферромагнетик, для которого
+\begin{equation}
+    \sr{\m_i} = \sr{\m_j} = \sr{\m_k} = \sr{\m} \quad \sr{\eta_{ij}} = \sr{\eta_{jk}} = \sr{\eta}.
+\end{equation}
+
+Тогда $\lambda_{ij} = \lambda_{jk}$, $\h_i = \h_k$. Несмотря на то, что  $\sr{\m_i} =  \sr{\m_j}$, все равно $\h_i \neq \h_j$, поскольку $\lambda_{ij} \neq \lambda_{ik}$. Тогда
+\begin{multline}
+    \ZW =  \int\limits_{\SV}e^{\rho_2\p\m_j}\ZV\left(\h_i \p+\lambda_{ij}\m_j, \lambda_{ik}\right)\,d\m_j = 2\pi \int\limits_{-1}^1 e^{h_jx}\ZV\left(\sqrt{h_i^2 + \lambda_{ij}^2 + 2h_i\lambda_{ij} x}, \lambda_{ik}\right)\,dx =\\= \frac{2\pi}{h_i\lambda_{ij}} e^{-\frac{h_j}{h_i}\frac{h_i^2+\lambda_{ij}^2}{2\lambda_{ij}}} \int\limits_{|h_i-\lambda_{ij}|}^{|h_i+\lambda_{ij}|} e^{\frac{h_j}{h_i}\frac{t^2}{2\lambda_{ij}}}t\ZV(t, \lambda_{ik})\,dt = \frac{\sqrt{2}(2\pi)^3}{h_i\lambda_{ij}\sqrt{\lambda_{ik}}} e^{-\frac{h_j}{h_i}\frac{h_i^2+\lambda_{ij}^2}{2\lambda_{ij}}} \int\limits_{h_i-\lambda_{ij}}^{h_i+\lambda_{ij}} e^{\frac{h_j}{h_i}\frac{t^2}{2\lambda_{ij}}}\cFV(t, \lambda_{ik})\,dt.
+\end{multline}
+
+Введем новую функцию
+\begin{equation}
+    \FW(x \, | \, a, b) = e^{-x^2}\int\limits_0^xe^{t^2} \FV(at+b) \,dt.
+\end{equation}
+
+Тогда $\ZW$ можно переписать как
+\begin{equation}
+    \ZW =  \frac{2(2\pi)^3}{\sqrt{h_ih_j\lambda_{ij}\lambda_{ik}}} \cFW(h_i, h_j, \lambda_{ij}, \lambda_{ik}),
+\end{equation}
+\begin{multline}
+    \cFW = \sum\limits_{\sigma_{1,2,3}}\sigma_1\sigma_2\sigma_3 \exp\left(\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})\right) \cdot
+    \\
+    \cdot \FW\left(\sqrt{\frac{h_j}{h_i}}\frac{h_i + \sigma_3\lambda_{ij} + (\sigma_1+\sigma_2)\lambda_{ij}\frac{h_i}{h_j}}{\sqrt{2\lambda_{ij}}} \, \Bigg| \, \sqrt{\frac{h_i\lambda_{ij}}{h_j\lambda_{ik}}}, \frac{\sigma_1+\sigma_2}{\sqrt{2\lambda_{ik}}}\left(\lambda_{ik}-\lambda_{ij}\frac{h_i}{h_j}\right) \right).
+\end{multline}
+
+\subsection*{Производные $\FW(x \, | \, a, b)$}
+Производная по $x$:
+\begin{equation}
+    \frac{\partial \FW(x \, | \, a, b)}{\partial x} = \FV(ax+b)-2x\FW(x \, | \, a, b).
+\end{equation}
+
+Для нахождения производных по $a$ и $b$ необходимо найти значение двух видов интегралов.
+
+1. Интегралы вида
+\begin{equation}
+    I^{(2)}_n(x) \equiv e^{-x^2}\int\limits_0^xt^{n}e^{t^2}\, dt, \quad I^{(2)}_0(x) = \FV(x).
+\end{equation}
+
+Поскольку
+\begin{equation}
+    e^{-x^2}\int\limits_0^xe^{at^2}\, dt = \frac{1}{\sqrt{a}}\FV\left(\sqrt{a}x\right)e^{x^2(a-1)}, \quad e^{-x^2}\int\limits_0^xte^{at^2}\, dt = \frac{1}{2a}e^{-x^2}\left(e^{ax^2}-1\right),
+\end{equation}
+то
+\begin{equation}
+    I^{(2)}_{2k}(x) = \frac{d^k}{da^k}\left[\frac{1}{\sqrt{a}}\FV\left(\sqrt{a}x\right)e^{x^2(a-1)}\right]\Bigg|_{a=1}, \quad
+    I^{(2)}_{2k+1}(x) = \frac{d^k}{da^k}\left[\frac{1}{2a}e^{-x^2}\left(e^{ax^2}-1\right)\right]\Bigg|_{a=1}.
+\end{equation}
+
+2. Интегралы вида
+\begin{equation}
+    I^{(3)}_n(x \, | \, a, b) \equiv e^{- x^{2}} \int\limits_{0}^{x} t^{n} e^{t^{2}} \FV\left(a t + b\right)\, dt, \quad I^{(3)}_0(x \, | \, a, b) =  \FW(x \, | \, a, b).
+\end{equation}
+
+Используя интегрирования по частям, получим
+\begin{multline}
+    2 (1-a^{2}) I^{(3)}_n(x \, | \, a, b) = x^{n-1}\FV\left(a x + b\right) - e^{-x^2}\FV(b)\delta_{n, 1} -\\- aI^{(2)}_{n-1}(x) + 2abI^{(3)}_{n-1}(x \, | \, a, b) - (n-1)I^{(3)}_{n-2}(x \, | \, a, b),
+\end{multline}
+где $\delta_{n, 1}$ --- дельта-символ Кронекера.
+
+При $a = 1$
+\begin{equation}
+    2bI^{(3)}_{n}(x \, | \, 1, b) = e^{-x^2}\FV(b)\delta_{n+1, 1} - x^{n}\FV\left(x + b\right) + I^{(2)}_{n}(x) + nI^{(3)}_{n-1}(x \, | \, 1, b).
+\end{equation}
+
+При $a = 1$ и $b = 0$
+\begin{equation}
+    (n+1)I^{(3)}_{n}(x \, | \, 1, 0) = x^{n+1}\FV(x)-I^{(2)}_{n+1}(x).
+\end{equation}
+
+Тогда
+\begin{equation}
+    2b\FW(x \, | \, 1, b) = F^{(2)}\left(b\right) e^{- x^{2}} + F^{(2)}\left(x\right) - F^{(2)}\left(b + x\right), 
+\end{equation}
+\begin{equation}
+    \FW(x \, | \, 1, 0) = x\FV(x) - \frac{1}{2}\left(1-e^{-x^2}\right).
+\end{equation}
+
+Обратите внимания, исходя из выражения для $\cFW(h_i, h_j, \lambda_{ij}, \lambda_{ik})$, при $h_i\lambda_{ij} = h_j\lambda_{ik}$ получаем, что $a = 1$ и $b = 0$. Такой случай мы будем называть вырожденным. Особенность этого случая в том, что для нахождения старших производных функции $\FW(x \, | \, a, b)$ недостаточно знать явного вида первой производной, поскольку для ее нахождения мы зафиксировали, что $a = 1$ и $b = 0$. Необходимо сначала взять все производные, а уже после использовать значения $I^{(2)}_n$ и $I^{(3)}_n$.
+
+Имеем
+\begin{equation}
+    \frac{\partial \FW(x \, | \, a, b)}{\partial x} = \FV(ax+b)-2x\FW(x \, | \, a, b),
+\end{equation}
+\begin{equation}
+    \frac{\partial \FW(x \, | \, a, b)}{\partial a}  = - 2 a I^{(3)}_{2}(x \, | \, a, b) - 2 b I^{(3)}_{1}(x \, | \, a, b) + I^{(2)}_{1}(x),
+\end{equation}
+\begin{equation}
+    \frac{\partial \FW(x \, | \, a, b)}{\partial b} = - 2 a I^{(3)}_{1}(x \, | \, a, b) - 2 b I^{(3)}_{0}(x \, | \, a, b) + I^{(2)}_{0}(x).
+\end{equation}
+
+
+Тогда
+
+\begin{equation}
+    (1-a^2)\frac{\partial \FW(x \, | \, a, b)}{\partial b}  = a F^{(2)}\left(b\right) e^{- x^{2}} - a F^{(2)}\left(a x + b\right) - 2 b F^{(3)}\left(x \, | \, a, b \right) + F^{(2)}\left(x\right).
+\end{equation}
+
+\begin{multline}
+    (1-a^2)^2\frac{\partial \FW(x \, | \, a, b)}{\partial a} = - \frac{a^{2}}{2} + \frac{1}{2} + a b F^{(2)}\left(x\right) + b F^{(2)}\left(b\right) e^{- x^{2}} + \left(\frac{a^{2}}{2} - \frac{1}{2}\right) e^{- x^{2}} 
+    \\
+    + \left(- a^{3} - 2 a b^{2} + a\right) F^{(3)}\left(x \, | \, a, b \right) + \left(a^{3} x - a x - b\right) F^{(2)}\left(a x + b\right).
+\end{multline}
+
+Рассмотрим также вырожденный случай:
+\begin{equation}
+    \frac{\partial \FW(x \, | \, a, b)}{\partial b}\Big|_{a=1,b=0}  = \frac{x}{2} + \left(\frac{1}{2} - x^2\right) F^{(2)}\left(x\right).
+\end{equation}
+
+\begin{equation}
+    \frac{\partial \FW(x \, | \, a, b)}{\partial a}\Big|_{a=1,b=0} = \frac{x^{2}}{3} \cdot \left(1 - 2x F^{(2)}\left(x\right)\right) + \frac{1}{6} \left(1 - e^{- x^{2}}\right).
+\end{equation}
+
+\subsection*{Численный метод для расчета $\FW(x \, | \, a, b)$}
+Расчет функции $\FW(x \, | \, a, b)$ с помощью прямого интегрирования неэффективен и при больших $x$ невозможен из-за переполнения. Новый алгоритм расчета $\FW(x \, | \, a, b)$ может быть получен с помощью аппроксимации для функции Доусона $\FV(x)$:
+\begin{equation}
+    \FV(x) = \lim_{h\rightarrow0} \frac{1}{\sqrt{\pi}} \sum\limits_{n \; \text{odd}} \frac{e^{-\left(x-nh\right)^2}}{n}.
+\end{equation}
+
+Подставим эту аппроксимацию в определение функции $\FW(x \, | \, a, b)$. Пусть $c \equiv 1 - a^2$. Возможны четыре случая:
+
+{\bf 1}. $c = 1 \Rightarrow a = 0$.
+\begin{equation}
+    \FW(x \, | \, 0, b) = \FV(x)\FV(b).
+\end{equation}
+
+{\bf 2}. $c = 0 \Rightarrow a = 1$.
+
+\begin{equation}
+    2b\FW(x \, | \, 1, b) = F^{(2)}\left(b\right) e^{- x^{2}} + F^{(2)}\left(x\right) - F^{(2)}\left(b + x\right), 
+\end{equation}
+\begin{equation}
+    \FW(x \, | \, 1, 0) = x\FV(x) - \frac{1}{2}\left(1-e^{-x^2}\right).
+\end{equation}
+
+{\bf 3}. $c > 0$, $c \neq 1$.
+\begin{equation}
+    \FW(x \, | \, a, b) = \lim_{h\rightarrow0} \frac{1}{\sqrt{\pi c}} \left(S_1 - S_2\right),
+\end{equation}
+где
+
+\begin{equation}
+    S_1 = \sum\limits_{n \; \text{odd}} \frac{1}{n} \FV\left(\frac{- a b + a h n + c x}{\sqrt{c}}\right) \exp\left(- 2 a b x + 2 a h n x - b^{2} + 2 b h n + c x^{2} - h^{2} n^{2} - x^{2}\right),
+\end{equation}
+\begin{equation}
+    S_2 = \sum\limits_{n \; \text{odd}} \frac{1}{n} \FV\left(\frac{-ab + ahn}{\sqrt{c}}\right) \exp\left(- b^{2} + 2 b h n - h^{2} n^{2} - x^{2}\right).
+\end{equation}
+
+Слагаемые в рядах $S_1$ и $S_2$ также, как и в аппроксимации $\FV(x)$, в значительной степени определяются экспонентой в знаменателе. В обоих рядах производим суммирование от $n_0$: $n \rightarrow n + n_0$. В первом ряду $n_0$ --- ближайшее четное к $(ax+b)/h$, во втором ряду $n_0$ --- ближайшее четное к $b/h$.
+
+Также обратим внимания, что
+\begin{equation}
+    e^{- 2 a b x + 2 a h n x - b^{2} + 2 b h n + c x^{2} - h^{2} n^{2} - x^{2}} \rightarrow e^{- 2 a b x + 2 a h n_{0} x - b^{2} + 2 b h n_{0} + c x^{2} - h^{2} n_{0}^{2} - x^{2}} e^{n \left(2 a h x + 2 b h - 2 h^{2} n_{0}\right)} e^{- h^{2} n^{2}},
+\end{equation}
+\begin{equation}
+    e^{- b^{2} + 2 b h n - h^{2} n^{2} - x^{2}} \rightarrow e^{- b^{2} + 2 b h n_{0} - h^{2} n_{0}^{2} - x^{2}} e^{n \left(2 b h - 2 h^{2} n_{0}\right)} e^{- h^{2} n^{2} }.
+\end{equation}
+
+Оба выражения можно разбить на три экспоненты: первая экспонента не зависит от $n$, аргумент второй экспоненты линейно зависим от $n$, третью экспоненту можно рассчитать заранее, поскольку ее аргумент зависит только от $h$ и $n$. Для обеспечения абсолютной точности в $10^{-8}$ достаточно взять $h=0.4$ и $N=6$.
+
+{\bf 4}. $c < 0$.
+\begin{multline}
+    \FW(x \, | \, a, b) = \lim_{h\rightarrow0} \frac{1}{\sqrt{|c|}} \sum\limits_{n \; \text{odd}} \frac{1}{2n} \left(- \operatorname{erf}{\left(\frac{- a b + a h n + c x}{\sqrt{|c|}} \right)} + \operatorname{erf}{\left(\frac{-ab + ahn}{\sqrt{|c|}} \right)}\right) \cdot\\\cdot\exp\left(- x^{2} + \frac{- a^{2} \left(- b + h n\right)^{2}}{c} - b^{2} + 2 b h n - h^{2} n^{2}\right).
+\end{multline}
+
+Введем новую функцию
+\begin{equation}
+    \overline{\operatorname{erfc}}(x) = 
+    \begin{cases}
+        1 - \operatorname{erf}(x), \quad &\text{если $x \ge 0$}, \\
+        -1 - \operatorname{erf}(x), \quad &\text{если $x < 0$} \\
+    \end{cases}
+    = 2\Theta(x) - 1 - \operatorname{erf}(x),
+\end{equation}
+где
+\begin{equation}
+    \Theta(x) = 
+    \begin{cases}
+        1,  \quad &\text{если $x \ge 0$}, \\
+        0, \quad &\text{если $x < 0$}. \\
+    \end{cases}    
+\end{equation}
+
+Тогда
+\begin{equation}
+    \operatorname{erf}(x) = 2\Theta(x) - 1 - \overline{\operatorname{erfc}}(x).
+\end{equation}
+
+Также введем функцию
+\begin{equation}
+    \overline{\operatorname{erfcx}}(x) = e^{x^2}\cdot\overline{\operatorname{erfc}}(x) = 
+    \begin{cases}
+        \operatorname{erfcx}(x), \quad &\text{если $x \ge 0$}, \\
+        -\operatorname{erfcx}(-x), \quad &\text{если $x < 0$}, \\
+    \end{cases}
+\end{equation}
+где $\operatorname{erfcx}(x)$ --- scaled complementary error function.
+
+Тогда
+\begin{equation}
+    \FW(x \, | \, a, b) = \lim_{h\rightarrow0} \frac{1}{2\sqrt{|c|}} \left(S_1 - S_2 - S_3\right),
+\end{equation}
+
+где
+\begin{equation}
+    S_1 = \sum\limits_{n \; \text{odd}} \frac{1}{n} \overline{\operatorname{erfcx}} \left(\frac{- a b + a h n + c x}{\sqrt{|c|}}\right) \exp\left(- 2 a b x + 2 a h n x - b^{2} + 2 b h n + c x^{2} - h^{2} n^{2} - x^{2}\right),
+\end{equation}
+\begin{equation}
+    S_2 = \sum\limits_{n \; \text{odd}} \frac{1}{n} \overline{\operatorname{erfcx}} \left(\frac{-ab + ahn}{\sqrt{|c|}}\right) \exp\left(- b^{2} + 2 b h n - h^{2} n^{2} - x^{2}\right)
+\end{equation}
+\begin{multline}
+    S_3 = \sum\limits_{n \; \text{odd}} \frac{2}{n} \left(\Theta\left(\frac{- a b + a h n + c x}{\sqrt{|c|}}\right) - \Theta\left(\frac{-ab + ahn}{\sqrt{|c|}}\right)\right)\cdot\\\cdot\exp\left(- x^{2} + \frac{- a^{2} \left(- b + h n\right)^{2}}{c} - b^{2} + 2 b h n - h^{2} n^{2}\right),
+\end{multline}
+
+Первых два ряда, $S_1$ и $S_2$, устроены ровно так же, как и два первых ряда в случае $c > 0$, отличие в используемой функции. Однако обратите внимания, что функция $\FV(x)$ ведет себя гладко в нуле, но $\operatorname{erfcx}(x)$ имеет разрыв в нуле. Поэтому аргумент функции $\operatorname{erfcx}(x)$ необходимо рассчитать каждый раз при новом $n$, поскольку рядом с нулем наличие даже малейшей погрешности в расчетах из-за разрыва может привести к сильному падению точности. Для достижения точности в $10^{-8}$ достаточно взять $h = 0.4$ и $N=6$.
+
+Перейдем к $S_3$. Рассмотрим $\Theta(ax+b)$. Если $a > 0$, то
+\begin{equation}
+    \Theta(ax+b) = 
+    \begin{cases}
+        1,  \quad &\text{если $x + b/a\ge 0$}, \\
+        0, \quad &\text{если $x + b/a < 0$} \\
+    \end{cases}   
+    = \Theta\left(x+\frac{b}{a}\right).
+\end{equation}
+
+Если $a < 0$, то 
+\begin{equation}
+    \Theta(ax+b) = 
+    \begin{cases}
+        1,  \quad &\text{если $x + b/a \le 0$}, \\
+        0, \quad &\text{если $x + b/a > 0$} \\
+    \end{cases}   
+    = 1 - \Theta\left(x+\frac{b}{a}\right) - \left[x+\frac{b}{a} = 0\right],
+\end{equation}
+где $[P]$~--- скобки Айверсона:
+\begin{equation}
+    [P] = 
+    \begin{cases}
+        1, \quad &\text{если P истинно}, \\
+        0, \quad &\text{если P ложно}. \\
+    \end{cases}
+\end{equation}
+
+Тогда в общем виде 
+\begin{equation}
+    \Theta(ax+b) = \operatorname{sign}(a)\cdot\Theta\left(x+\frac{b}{a}\right) + (1-\Theta(a))\cdot\left(1-\left[x+\frac{b}{a} = 0\right]\right),
+\end{equation}
+где
+\begin{equation}
+    \operatorname{sign}(x) = 
+    \begin{cases}
+        1, \quad &\text{если $x > 0$}, \\
+        -1, \quad &\text{если $x < 0$}. \\
+    \end{cases}
+\end{equation}
+
+Пусть $n_1 = \frac{ab - cx}{ah}$, $n_2 =  \frac{b}{h}$. Тогда
+\begin{multline}
+    S_3 = \sum\limits_{n \; \text{odd}} \frac{2}{n} \Bigg(\operatorname{sign}(a)\cdot\left(\Theta\left(n-n_1\right) - \Theta\left(n - n_2\right)\right) +  (1-\Theta(a))\cdot \left([n-n_1 = 0] - [n - n_2 = 0]\right) \Bigg)\cdot\\\cdot\exp\left(- x^{2} + \frac{- a^{2} \left(- b + h n\right)^{2}}{c} - b^{2} + 2 b h n - h^{2} n^{2}\right).
+\end{multline}
+
+Две $\Theta$-функции выделяют полуинтервал $[n_2,\, n_1)$, если $n_1 > n_2$, и $[n_1,\, n_2)$, если $n_2 > n_1$, в которых слагаемые ряда не равны нулю. При  $a < 0$ две скобки Айверсона добавляют значения при $n_1$ и $n_2$. Цикл по $n$ необходимо производить только в пределах этого полуинтервала. Поскольку экспонента ведет себя монотонно, то начинать цикл необходимо с максимального значения экспоненты. По мере уменьшения значения экспоненты цикл можно остановить, если значение достигло требуемой точности. 
+
+\subsection*{Производные $\cFW(h_i, h_j, \lambda_{ij}, \lambda_{ik})$}
+По определению
+\begin{multline}
+    \cFW = \sum\limits_{\sigma_{1,2,3}}\sigma_1\sigma_2\sigma_3 \exp\left(\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})\right)
+    \\
+    \FW\left(\sqrt{\frac{h_j}{h_i}}\frac{h_i + \sigma_3\lambda_{ij} + (\sigma_1+\sigma_2)\lambda_{ij}\frac{h_i}{h_j}}{\sqrt{2\lambda_{ij}}} \, \Bigg| \, \sqrt{\frac{h_i\lambda_{ij}}{h_j\lambda_{ik}}}, \frac{\sigma_1+\sigma_2}{\sqrt{2\lambda_{ik}}}\left(\lambda_{ik}-\lambda_{ij}\frac{h_i}{h_j}\right) \right).
+\end{multline}
+
+Пусть
+\begin{equation}
+    x \equiv \sqrt{\frac{h_j}{h_i}}\frac{h_i + \sigma_3\lambda_{ij} + (\sigma_1+\sigma_2)\lambda_{ij}\frac{h_i}{h_j}}{\sqrt{2\lambda_{ij}}}, \quad a \equiv \sqrt{\frac{h_i\lambda_{ij}}{h_j\lambda_{ik}}}, \quad b \equiv \frac{\sigma_1+\sigma_2}{\sqrt{2\lambda_{ik}}}\left(\lambda_{ik}-\lambda_{ij}\frac{h_i}{h_j}\right).
+\end{equation}
+
+После суммирования по $\sigma_{123}$:
+\begin{equation}
+    e^{\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})}e^{-x^2} = e^{- \frac{\lambda_{ij} \sigma_{1} \sigma_{2} h_{1}}{h_{2}} - \frac{\lambda_{ij} h_{1}}{h_{2}} - \frac{\lambda_{ij} h_{2}}{2 h_{1}} + \lambda_{ik} \sigma_{1} \sigma_{2} - \frac{h_{1} h_{2}}{2 \lambda_{ij}}} \rightarrow 0,
+\end{equation}
+\begin{equation}
+    e^{\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})}e^{-x^2}\FV(b) \rightarrow 0, \quad 1 \rightarrow 0.
+\end{equation}
+Эти слагаемые обращаются в ноль, поскольку не зависят от $\sigma_3$. 
+
+Также
+\begin{equation}
+    e^{\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})} \rightarrow {\cal E}_{\{i\}}(h_i, h_j, \lambda_{ij}, \lambda_{ik}), \quad
+    \FW(x \, | \, a, b) \rightarrow \cFW(h_i, h_j, \lambda_{ij}, \lambda_{ik}),
+\end{equation}
+\begin{equation}
+    \FV(x) \rightarrow {\cal F}_{\{i\}}(h_i, h_j, \lambda_{ij}, \lambda_{ik}), \quad \FV(ax+b) \rightarrow \tilde{\cal F}_{\{i\}}(h_i, h_j, \lambda_{ij}, \lambda_{ik}).
+\end{equation}
+где
+\begin{equation}
+    {\cal E}_{\{i\}}(h_i, h_j, \lambda_{ij}, \lambda_{ik}) = \sum\limits_{\sigma_{1,2,3}}\prod\limits_{i\in\{i\}} \sigma_i e^{\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})},
+ \end{equation}
+\begin{equation}
+    {\cal F}_{\{i\}}(h_i, h_j, \lambda_{ij}, \lambda_{ik}) = \sum\limits_{\sigma_{1,2,3}}\prod\limits_{i\in\{i\}} \sigma_i e^{\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})} \FV\left(\sqrt{\frac{h_j}{h_i}}\frac{h_i + \sigma_3\lambda_{ij} + (\sigma_1+\sigma_2)\lambda_{ij}\frac{h_i}{h_j}}{\sqrt{2\lambda_{ij}}}\right),
+\end{equation}
+\begin{equation}
+    \tilde{\cal F}_{\{i\}}(h_i, h_j, \lambda_{ij}, \lambda_{ik}) = \sum\limits_{\sigma_{1,2,3}} \prod\limits_{i\in\{i\}} \sigma_i e^{\sigma_3h_j+\sigma_1\sigma_2\lambda_{ik}+(\sigma_1+\sigma_2)(h_i + \sigma_3\lambda_{ij})}\FV\left(\frac{h_i + \sigma_3\lambda_{ij}+(\sigma_1+\sigma_2)\lambda_{ik}}{\sqrt{2\lambda_{ik}}}\right).
+\end{equation}
+
+\subsection*{Моменты}
+Перейдем к расчету моментов. Имеем
+\begin{equation}\label{moments::diff::Z3}
+    \frac{\partial \ln \ZW}{\partial h_i} = 2|\sr{\m_i}| \equiv 2\sr{m_i}, \quad \frac{\partial \ln \ZW}{\partial h_j} = |\sr{\m_j}| \equiv \sr{m_j}, \quad \frac{\partial \ln \ZW}{\partial \lambda_{ij}} = 2\sr{\eta_{ij}}, \quad \frac{\partial \ln \ZW}{\partial \lambda_{ik}} = \sr{\eta_{ik}}.
+\end{equation}
+
+Для ферромагнетика $\sr{m_i} = \sr{m_j}$, однако для удобства аналитических расчетов временно положим, что $\sr{m_i} \neq \sr{m_j}$.
+
+Также
+\begin{equation}
+    Q = \sr{\m_i\cdot\Big[\m_j\times\big[\m_j\times\m_k\big]\Big]} = \sr{(\m_i\cdot\m_j)(\m_j\cdot\m_k)} - \sr{\m_i\cdot\m_k},
+\end{equation}
+
+Расчет $Q$ напрямую из симметричного случая невозможен, так как вторая производная $\ZW$ по~$\lambda_{ij}$ создает момент $\sr{\eta_{ij}^2}$. Введем $Q^*$
+\begin{equation}\label{def::Q_star}
+    Q^* \equiv Q + \sr{\eta_{ij}^2} - 1 = \frac{1}{2\ZW}\frac{\partial^2\ZW}{\partial\lambda_{ij}^2} - \sr{\eta_{ik}} - 1.
+\end{equation}
+Момент $\sr{\eta_{ij}^2}$ можно найти из двухчастичной функции распределения. Как уже отмечалось выше, старшие моменты двухчастичной и трехчастичной функций распределения равны друг другу с точностью аппроксимации двухчастичной функции распределения.
+
+В вырожденном случае $h_i\lambda_{ij} = h_j\lambda_{ik}$ значение производной как $\FW$, так и $\cFW$, будет отличаться от общего случая $h_i\lambda_{ij} \neq h_j\lambda_{ik}$, то есть будут отличаться выражения для моментов. Тем не менее, по аналогии с $\ZV$ также можно найти связь между вторыми моментами, в частности, с моментом~$Q^*$. Полученные выражения будут одинаковые, как в общем случае, так и в вырожденном.
+
+Рассмотрим общий случай. С помощью (\ref{moments::diff::Z3}) можно получить выражения для моментов, однако полученные выражения слишком громоздки для записи. Полученную систему на моменты можно упростить, если рассмотреть эту систему как равенство вектора $[\sr{m_i},\; \sr{m_j},\;\sr{\eta_{ij}},\; \sr{\eta_2}]^T$ и произведение матрицы коэффициентов на вектор $[{\cal F}^{(3)},\; \tilde{\cal F}_{123}^{(3)},\; \tilde{\cal F}_{12}^{(3)},\; {\cal F}_{23}]^T$. Находя обратную матрицу, получим
+\begin{multline*}
+    \Delta = 2 \lambda_{ij}^{2} \left<\eta_{ij}\right> h_i + \lambda_{ij}^{2} h_j + 2 \lambda_{ij} \left<\eta_{ij}\right> \lambda_{ik} h_j + 2 \lambda_{ij} \left<\eta_{ik}\right> \lambda_{ik} h_i + 2 \lambda_{ij} \left<{m_i}\right> h_i^{2} +
+    \\
+    + 2 \lambda_{ij} \left<{m_j}\right> h_i h_j + 2 \lambda_{ij} \lambda_{ik} h_i + 2 \lambda_{ij} h_i + 2 \left<{m_i}\right> \lambda_{ik} h_i h_j + \lambda_{ik} h_j + h_i^{2} h_j.
+\end{multline*}
+\begin{equation}
+    {\cal F}^{(3)} = \frac{\sqrt{h_ih_j\lambda_{ij}\lambda_{ik}}}{2 \Delta}{\cal E}_{123}, \quad
+    \tilde{\cal F}_{123}^{(3)} = \frac{\sqrt{2\lambda_{ik}}}{2 \Delta}{\cal E}_{123} \left(2 \lambda_{ij} \left<{m_i}\right> h_i + \lambda_{ij} \left<{m_j}\right> h_j + \lambda_{ij} + h_i h_j\right)
+\end{equation}
+\begin{equation}
+    \tilde{\cal F}_{12}^{(3)} = \frac{\sqrt{2\lambda_{ik}}}{2 \Delta}{\cal E}_{123} \left(2 \lambda_{ij} \left<\eta_{ij}\right> h_i + \lambda_{ij} h_j + \left<{m_j}\right> h_i h_j + h_i\right),
+\end{equation}
+\begin{equation}
+    {\cal F}_{23} = \frac{\sqrt{2h_ih_j\lambda_{ij}}}{2 \Delta}{\cal E}_{123}\left(\lambda_{ij} \left<\eta_{ij}\right> + \left<\eta_{ik}\right> \lambda_{ik} + \left<{m_i}\right> h_i + \lambda_{ik} + 1\right).
+\end{equation}
+ 
+Ровно как и в случае с $\ZV$, полученная система удобна для аналитических расчетов, но для численного нахождения коэффициентов в зависимости от моментов необходимо использовать изначальную систему без проведенных преобразований с матрицей, поскольку система выше приводит к существенным ошибкам и к не существующим решениям из-за низкой обусловленности.
+
+В вырожденном случае также можно переписать выражения для моментов в виде похожей системы, которая будет отличаться от системы для общего случая. В этом случае коэффициент $\lambda_{ik}$ выражается через другие коэффициенты. Это означает, что момент $\sr{\eta_2}$ выражается через другие моменты. Тем не менее, в вырожденном момент $\sr{\eta_2}$ не может быть выражен через линейную комбинацию других моментов, кроме двух особых случаях: $h_i=h_j$ и $\lambda_{ij}=\lambda_{ik}$; $h_i=\lambda_{ik}$ и $h_j=\lambda_{ij}$. В этих случая моменты выражаются через друг друга через линейную комбинацию. Как отмечалось выше, в этих случаях связь между вторыми моментами не будет отличаться от общего случая.
+
+Перейдем к нахождению связи между вторыми моментами, в частности, с моментом~$Q^*$. Поскольку $|\sr{\m_j \eta_{ij}}| = |\sr{\m_j \eta_{jk}}|$, то
+\begin{equation}
+    \frac{\lambda_{ij}}{2}Q^* = \frac{h_j}{2}\left(\left<{m_i}\right> - \left<{m_j\eta_{ij}}\right>\right) - \left<{\eta_{ij}}\right>.
+\end{equation}
+Поскольку в ферромагнитном случае $\sr{m_i} = \sr{m_j}$, приравняем старший момент $\Upsilon$ для двухчастичной и трехчастичной функций распределения: $\left<{m_i}\right> - \left<{m_j\eta_{ij}}\right> = 2 \sr m \Upsilon$. Тогда используя выражение (\ref{eta2::upsilon}), получим аппроксимацию для $Q$:
+\begin{equation}\label{Q::approx}
+    \frac{\lambda^{(2)}}{2}Q \approx h^{(2)} \sr m \Upsilon \left(\frac{h_j^{(3)} / h^{(2)}}{\lambda_{ij}^{(3)} / \lambda^{(2)}}-1\right) - \sr{\eta_{ij}}\frac{1-\lambda_{ij}^{(3)} / \lambda^{(2)}}{\lambda_{ij}^{(3)} / \lambda^{(2)}}.
+\end{equation}
+
+Также, поскольку
+\begin{equation}
+    \sr{m_{jh}^2} \equiv \frac{\sr{(\m_j \cdot \h_j)^2}}{h_j} = \frac{1}{\ZW} \frac{\partial^2 \ZW}{\partial h_j^2} = 1 - \frac{2 \left<{m_j}\right>}{h_j} + \frac{2\lambda_{1}}{h_j}\left(\left<{m_i}\right> - \left<{m_j\eta_{ij}}\right>\right),
+\end{equation}
+то
+\begin{equation}
+    \frac{\lambda_{ij}}{2}Q^* = \frac{h_j}{4\lambda_{ij}} \left(2 \left<{m_j}\right> + h_j(\left<m_{jh}^2\right> - 1)\right) - \left<{\eta_{ij}}\right>.
+\end{equation}
+Момент $\sr{m_{ih}^2}$ не может быть найден в симметричном случае по той же причине, что и в $\ZV$.
+
+\end{document}
