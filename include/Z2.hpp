@@ -6,6 +6,9 @@
  * Симметричный случай: случай, при котором hi = hj = h.
  * 'norm' в симметричном случае означает умножение на exp(-2h-l).
  * 
+ * Несимметричный случай: случай, при котором hi != hj, но hi и hj коллинеарны.
+ * 'norm' в симметричном случае означает умножение на exp(- hi-hj-l).
+ * 
  * @copyright Copyright (c) 2025
  * Licensed under the Apache License, Version 2.0
  */
@@ -71,5 +74,12 @@ public:
      */
     int calc_from_moments(double h0, double l0, double eps = 1e-8, int max_steps = 64);
 };
+
+
+double cF2_norm_not_symmetrical(double hi, double hj, double l);
+double cF2_not_symmetrical(double hi, double hj, double l);
+
+double E_norm_not_symmetrical(double hi, double hj, double l, bool arg_s1, bool arg_s2);
+double E_not_symmetrical(double hi, double hj, double l, bool arg_s1, bool arg_s2);
 
 #endif  // CMDLIB_Z2_HPP

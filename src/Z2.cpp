@@ -5,6 +5,8 @@
 
 const int SIGMAS[2] = { -1, 1 };
 
+// =======================================================================================
+
 inline double L(double p) { return fabs(p) > 1e-1 ? 1 / tanh(p) - 1 / p : p / 3; }
 inline double dLdp(double p) {
     double shp = sinh(p);
@@ -22,7 +24,7 @@ inline double invL(double M) {
     return p;
 }
 
-// ----------------------------------------------------------------------------------------
+// =======================================================================================
 
 double cF2_norm_symmetrical(double h, double l) {
     double result = 0;
@@ -61,7 +63,7 @@ double E_symmetrical(double h, double l, bool arg_s1, bool arg_s2) {
     return E_norm_symmetrical(h, l, arg_s1, arg_s2) * exp(2 * h + l);
 }
 
-// ----------------------------------------------------------------------------------------
+// =======================================================================================
 
 void Z2_symmetrical::calc_base() {
     _h = fabs(h) > 1e-4 ? 1 / h : NAN;
@@ -147,7 +149,7 @@ void Z2_symmetrical::calc_Z2_norm() {
     }
 }
 
-// ----------------------------------------------------------------------------------------
+// =======================================================================================
 
 void Z2_symmetrical::calc_from_coeffs() {
     calc_base();
@@ -216,3 +218,41 @@ int Z2_symmetrical::calc_from_moments(double h0, double l0, double eps, int max_
     return steps;
 }
 
+// =======================================================================================
+
+double cF2_norm_not_symmetrical(double hi, double hj, double l) {
+    double result = 0;
+    for (int is1 = 0; is1 < 2; is1++)
+        for (int is2 = 0; is2 < 2; is2++) {
+            int s1 = SIGMAS[is1];
+            int s2 = SIGMAS[is2];
+            result += s1 * s2 * exp((s1 - 1) * hi + (s2 - 1) * hj + (s1 * s2 - 1) * l) * dawson((hj + s1 * l + s2 * l * hj / hi) / sqrt(2 * l * hj / hi));
+        }
+
+    return result;
+}
+
+double cF2_not_symmetrical(double hi, double hj, double l) {
+    return cF2_norm_not_symmetrical(hi, hj, l) * exp(hi + hj + l);
+}
+
+double E_norm_not_symmetrical(double hi, double hj, double l, bool arg_s1, bool arg_s2) {
+    double result = 0;
+    for (int is1 = 0; is1 < 2; is1++)
+        for (int is2 = 0; is2 < 2; is2++) {
+            int s1 = SIGMAS[is1];
+            int s2 = SIGMAS[is2];
+
+            int factor = 1;
+            factor *= arg_s1 ? s1 : 1;
+            factor *= arg_s2 ? s2 : 1;
+
+            result += factor * exp((s1 - 1) * hi + (s2 - 1) * hj + (s1 * s2 - 1) * l);
+        }
+
+    return result;
+}
+
+double E_not_symmetrical(double hi, double hj, double l, bool arg_s1, bool arg_s2) {
+    return E_norm_not_symmetrical(hi, hj, l, arg_s1, arg_s2) * exp(hi + hj + l);
+}
