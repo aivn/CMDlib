@@ -19,6 +19,7 @@ eta_ik = sp.Symbol("\\left<{\\eta_{ik}}\\right>")
 eta_ik_2 = sp.Symbol("\\left<\eta_{ik}^{2}\\right>")
 mj_eta_ij = sp.Symbol("\\left<m_j\\eta_{ij}\\right>")
 mi_eta_ik = sp.Symbol("\\left<m_i\\eta_{ik}\\right>")
+mj_eta_ik = sp.Symbol("\\left<m_j\\eta_{ik}\\right>")
 mjh2 = sp.Symbol("\\left<m_{jh}^2\\right>")
 Q_star = sp.Symbol("Q^*")
 

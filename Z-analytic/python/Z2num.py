@@ -19,7 +19,7 @@ def calc_from_coeffs_symmetrical(h, l):
 
 def coeffs_symmetrical_approx(m, eta):
     """Аппроксимация коэффициентов для симметричного случая."""
-    if m == 1 or eta == 2:
+    if m == 1 or eta == 1:
         return np.nan, np.nan
 
     if m > .99 and eta > .99:
