@@ -6,8 +6,8 @@
 #include "../include/special.hpp"
 
 int main() {
-    assert(erfcx(0) == 1.);
-    assert(fabs(erfcx(1) - 0.427583576155807) < 1.2e-7);
+    assert(fabs(erfcx(0) - 1) < 1e-15);
+    assert(fabs(erfcx(1) - 0.427583576155807) < 1e-15);
 
     int N = 100;
     double left = 0, right = 10;

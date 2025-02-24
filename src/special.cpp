@@ -22,7 +22,7 @@ double dawson(double x) {
         return x * (1.0 - A1 * x2 * (1.0 - A2 * x2 * (1.0 - A3 * x2)));
     } else {  // Sampling theorem.
         double xx = fabs(x);
-        int n0   = 2 * int(0.5 * xx / h + 0.5);
+        int n0    = 2 * int(0.5 * xx / h + 0.5);
         double xp = xx - n0 * h;
 
         double e1 = exp(2.0 * xp * h);
@@ -45,10 +45,28 @@ double dawson(double x) {
 double erfcx(double x) {
     if (x < 0.) throw("erfcx requires nonnegative argument");
 
-    double t = 2. / (2. + x);
+    static const double coeffs[28] = {
+        -1.3026537197817094, 6.4196979235649026e-1,
+        1.9476473204185836e-2, -9.561514786808631e-3, -9.46595344482036e-4,
+        3.66839497852761e-4, 4.2523324806907e-5, -2.0278578112534e-5,
+        -1.624290004647e-6, 1.303655835580e-6, 1.5626441722e-8, -8.5238095915e-8,
+        6.529054439e-9, 5.059343495e-9, -9.91364156e-10, -2.27365122e-10,
+        9.6467911e-11, 2.394038e-12, -6.886027e-12, 8.94487e-13, 3.13092e-13,
+        -1.12708e-13, 3.81e-16, 7.106e-15, -1.523e-15, -9.4e-17, 1.21e-16, -2.8e-17
+    };
 
-    double result = t * exp(-1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
-    return result;
+    double d  = 0.;
+    double dd = 0.;
+    double t  = 2. / (2. + x);
+    double ty = 4. * t - 2.;
+
+    for (int i = 27; i > 0; i--) {
+        double tmp = d;
+        d          = ty * d - dd + coeffs[i];
+        dd         = tmp;
+    }
+
+    return t * exp(0.5 * (coeffs[0] + ty * d) - dd);
 }
 
 /**
@@ -111,7 +129,7 @@ double __F3_calc_S1(TFunc func, double x, double a, double b, double c) {
 
     double h  = __F3_h;
     double xx = (a * x + b) / h;
-    int n0   = 2 * int(0.5 * xx + sign(xx) * 0.5);
+    int n0    = 2 * int(0.5 * xx + sign(xx) * 0.5);
 
     double arg0_exp      = 2 * b * h * n0 - h * h * n0 * n0 + 2 * a * h * n0 * x - 2 * a * b * x + (c - 1) * x * x - b * b;
     double delta_arg_exp = 4 * a * h * x + 4 * b * h - 4 * h * h * n0;
@@ -119,7 +137,7 @@ double __F3_calc_S1(TFunc func, double x, double a, double b, double c) {
     double func_arg_linear = a * h * _sqrt_c;
     double func_arg_const  = (-a * b + c * x) * _sqrt_c;
 
-    double zero_n      = (c * x + a * b) / (a * h);
+    double zero_n     = (c * x + a * b) / (a * h);
     auto applied_func = [zero_n, func_arg_linear, func_arg_const, func](int n) {
         if (n == zero_n) return func(0.);
         return func(func_arg_linear * n + func_arg_const);
@@ -138,7 +156,7 @@ double __F3_calc_S2(TFunc func, double x, double a, double b, double c) {
 
     double h  = __F3_h;
     double xx = b / h;
-    int n0   = 2 * int(0.5 * xx + sign(xx) * 0.5);
+    int n0    = 2 * int(0.5 * xx + sign(xx) * 0.5);
 
     double arg0_exp      = 2 * b * h * n0 - h * h * n0 * n0 - b * b - x * x;
     double delta_arg_exp = 4 * b * h - 4 * h * h * n0;
@@ -146,7 +164,7 @@ double __F3_calc_S2(TFunc func, double x, double a, double b, double c) {
     double func_arg_linear = a * h * _sqrt_c;
     double func_arg_const  = -a * b * _sqrt_c;
 
-    double zero_n      = b / h;
+    double zero_n     = b / h;
     auto applied_func = [zero_n, func_arg_linear, func_arg_const, func](int n) {
         if (n == zero_n) return func(0.);
         return func(func_arg_linear * n + func_arg_const);
@@ -186,7 +204,7 @@ double F3(double x, double a, double b) {
                 std::swap(left, right);
             }
 
-            int n_prob  = (left + right) / 2;
+            int n_prob   = (left + right) / 2;
             double start = left, end = right;
             if (a * a * (b / c - h * n_prob / c) + b - h * n_prob > 0)
                 std::swap(start, end);

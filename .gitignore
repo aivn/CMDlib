@@ -26,4 +26,4 @@ __pycache__/
 *.o
 *.so
 *.cxx
-/*.py
+*backend.py

@@ -15,7 +15,7 @@
 double dawson(double x);
 
 /**
- * @brief Реализация scaled complementary error function для x >= 0 с относительной ошибкой < 1.2e-7.
+ * @brief Реализация scaled complementary error function для x >= 0.
  */
 double erfcx(double x);
 
