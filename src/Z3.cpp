@@ -2,6 +2,7 @@
 
 #include "../include/Z3.hpp"
 #include "../include/special.hpp"
+#include <iostream>
 
 const int SIGMAS[2] = { -1, 1 };
 
@@ -438,71 +439,73 @@ void Z3_symmetrical::calc_from_coeffs() {
     calc_Z3_norm();
 }
 
-// int Z3_symmetrical::calc_from_moments(double hi0, double hj0, double lij0, double lik0, double eps, int max_steps) {
-//     int steps = 0;
+int Z3_symmetrical::calc_from_moments(double hi0, double hj0, double lij0, double lik0, double eps, int max_steps) {
+    int steps = 0;
 
-//     h_i  = hi0;
-//     h_j  = hj0;
-//     l_ij = lij0;
-//     l_ik = lik0;
+    h_i  = hi0;
+    h_j  = hj0;
+    l_ij = lij0;
+    l_ik = lik0;
 
-//     double mi_ref = mi, mj_ref = mj, eta_ij_ref = eta_ij, eta_ik_ref = eta_ik;
+    double mi_ref = mi, mj_ref = mj, eta_ij_ref = eta_ij, eta_ik_ref = eta_ik;
 
-//     double delta_h_i = 1, delta_h_j = 1, delta_l_ij = 1, delta_l_ik = 1;
-//     while (delta_h_i * delta_h_i + delta_h_j * delta_h_j + delta_l_ij * delta_l_ij + delta_l_ik * delta_l_ik > eps * eps && steps < max_steps) {
-//         if (h_i <= 0 || h_j <= 0 || l_ij <= 0 || l_ik <= 0) break;
+    double delta_h_i = 1, delta_h_j = 1, delta_l_ij = 1, delta_l_ik = 1;
+    while (delta_h_i * delta_h_i + delta_h_j * delta_h_j + delta_l_ij * delta_l_ij + delta_l_ik * delta_l_ik > eps * eps && steps < max_steps) {
+        if (h_i <= 0 || h_j <= 0 || l_ij <= 0 || l_ik <= 0) break;
 
-//         calc_base();
-//         void calc_mi();
-//         void calc_mj();
-//         void calc_eta_ij();
-//         void calc_eta_ik();
+        calc_base();
+        calc_mi();
+        calc_mj();
+        calc_eta_ij();
+        calc_eta_ik();
 
-//         void calc_mj_eta_ij();
-//         void calc_mi_eta_ik();
-//         void calc_mj_eta_ik();
-//         void calc_eta_ik2();
+        calc_mj_eta_ij();
+        calc_mi_eta_ik();
+        calc_mj_eta_ik();
+        calc_eta_ik2();
 
-//         double mi_h_i  = eta_ik - 2. * (mi * mi) + 1. - 2. * mi / h_i + h_j * l_ij * mi / (h_i * h_i) - h_j * l_ij * mj_eta_ij / (h_i * h_i);
-//         double mi_h_j  = eta_ij - mi * mj - l_ij * mi / h_i + l_ij * mj_eta_ij / h_i;
-//         double mi_l_ij = -2. * eta_ij * mi + mj + mj_eta_ik - h_j * mi / h_i + h_j * mj_eta_ij / h_i;
-//         double mi_l_ik = -eta_ik * mi + mi_eta_ik;
+        double mi_h_i  = eta_ik - 2. * (mi * mi) + 1. - 2. * mi / h_i + h_j * l_ij * mi / (h_i * h_i) - h_j * l_ij * mj_eta_ij / (h_i * h_i);
+        double mi_h_j  = eta_ij - mi * mj - l_ij * mi / h_i + l_ij * mj_eta_ij / h_i;
+        double mi_l_ij = -2. * eta_ij * mi + mj + mj_eta_ik - h_j * mi / h_i + h_j * mj_eta_ij / h_i;
+        double mi_l_ik = -eta_ik * mi + mi_eta_ik;
 
-//         double mj_h_i  = 2. * eta_ij - 2. * mi * mj - 2. * l_ij * mi / h_i + 2. * l_ij * mj_eta_ij / h_i;
-//         double mj_h_j  = -(mj * mj) + 1. + 2. * l_ij * mi / h_j - 2. * l_ij * mj_eta_ij / h_j - 2. * mj / h_j;
-//         double mj_l_ij = -2. * eta_ij * mj + 2. * mj_eta_ij;
-//         double mj_l_ik = -eta_ik * mj + mj_eta_ik;
+        double mj_h_i  = 2. * eta_ij - 2. * mi * mj - 2. * l_ij * mi / h_i + 2. * l_ij * mj_eta_ij / h_i;
+        double mj_h_j  = -(mj * mj) + 1. + 2. * l_ij * mi / h_j - 2. * l_ij * mj_eta_ij / h_j - 2. * mj / h_j;
+        double mj_l_ij = -2. * eta_ij * mj + 2. * mj_eta_ij;
+        double mj_l_ik = -eta_ik * mj + mj_eta_ik;
 
-//         double eta_ij_h_i  = -2. * eta_ij * mi + mj + mj_eta_ik - h_j * mi / h_i + h_j * mj_eta_ij / h_i;
-//         double eta_ij_h_j  = -eta_ij * mj + mj_eta_ij;
-//         double eta_ij_l_ij = -2. * (eta_ij * eta_ij) - 2. * eta_ij / l_ij + eta_ik + h_j * mi / l_ij - h_j * mj_eta_ij / l_ij + 1.;
-//         double eta_ij_l_ik = -eta_ij * eta_ik + eta_ij - 2. * eta_ik / l_ij - eta_ik2 * l_ik / l_ij + h_i * mi / l_ij - h_i * mi_eta_ik / l_ij + l_ik / l_ij;
+        double eta_ij_h_i  = -2. * eta_ij * mi + mj + mj_eta_ik - h_j * mi / h_i + h_j * mj_eta_ij / h_i;
+        double eta_ij_h_j  = -eta_ij * mj + mj_eta_ij;
+        double eta_ij_l_ij = -2. * (eta_ij * eta_ij) - 2. * eta_ij / l_ij + eta_ik + h_j * mi / l_ij - h_j * mj_eta_ij / l_ij + 1.;
+        double eta_ij_l_ik = -eta_ij * eta_ik + eta_ij - 2. * eta_ik / l_ij - eta_ik2 * l_ik / l_ij + h_i * mi / l_ij - h_i * mi_eta_ik / l_ij + l_ik / l_ij;
 
-//         double eta_ik_h_i  = -2. * eta_ik * mi + 2. * mi_eta_ik;
-//         double eta_ik_h_j  = -eta_ik * mj + mj_eta_ik;
-//         double eta_ik_l_ij = -2. * eta_ij * eta_ik + 2. * eta_ij - 4. * eta_ik / l_ij - 2. * eta_ik2 * l_ik / l_ij + 2. * h_i * mi / l_ij - 2. * h_i * mi_eta_ik / l_ij + 2. * l_ik / l_ij;
-//         double eta_ik_l_ik = -(eta_ik * eta_ik) + eta_ik2;
+        double eta_ik_h_i  = -2. * eta_ik * mi + 2. * mi_eta_ik;
+        double eta_ik_h_j  = -eta_ik * mj + mj_eta_ik;
+        double eta_ik_l_ij = -2. * eta_ij * eta_ik + 2. * eta_ij - 4. * eta_ik / l_ij - 2. * eta_ik2 * l_ik / l_ij + 2. * h_i * mi / l_ij - 2. * h_i * mi_eta_ik / l_ij + 2. * l_ik / l_ij;
+        double eta_ik_l_ik = -(eta_ik * eta_ik) + eta_ik2;
 
-//         double D = expr_m_diff_h * expr_eta_diff_l - expr_m_diff_l * expr_eta_diff_h;
-//         if (D == 0) break;
-//         double _D = 1 / D;
+        double D = mi_h_i * (mj_h_j * (eta_ij_l_ij * eta_ik_l_ik - eta_ij_l_ik * eta_ik_l_ij) - mj_l_ij * (eta_ij_h_j * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_j) + mj_l_ik * (eta_ij_h_j * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_j)) - mi_h_j * (mj_h_i * (eta_ij_l_ij * eta_ik_l_ik - eta_ij_l_ik * eta_ik_l_ij) - mj_l_ij * (eta_ij_h_i * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_i) + mj_l_ik * (eta_ij_h_i * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_i)) + mi_l_ij * (mj_h_i * (eta_ij_h_j * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_j) - mj_h_j * (eta_ij_h_i * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_i) + mj_l_ik * (eta_ij_h_i * eta_ik_h_j - eta_ij_h_j * eta_ik_h_i)) - mi_l_ik * (mj_h_i * (eta_ij_h_j * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_j) - mj_h_j * (eta_ij_h_i * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_i) + mj_l_ij * (eta_ij_h_i * eta_ik_h_j - eta_ij_h_j * eta_ik_h_i));
+        if (D == 0) break;
+        double _D = 1 / D;
 
-//         double x1 = mi - mi_ref, x2 = mj - mj_ref, x3 = eta_ij - eta_ij_ref, x4 = eta_ik - eta_ik_ref;
+        double x1 = mi - mi_ref, x2 = mj - mj_ref, x3 = eta_ij - eta_ij_ref, x4 = eta_ik - eta_ik_ref;
 
-//         delta_h = ((m - m_ref) * expr_eta_diff_l - (eta - eta_ref) * expr_m_diff_l) * _D;
-//         delta_l = ((eta - eta_ref) * expr_m_diff_h - (m - m_ref) * expr_eta_diff_h) * _D;
+        delta_h_i  = _D * (-mi_h_j * (-mj_l_ij * (-eta_ij_l_ik * x4 + eta_ik_l_ik * x3) + mj_l_ik * (-eta_ij_l_ij * x4 + eta_ik_l_ij * x3) + x2 * (eta_ij_l_ij * eta_ik_l_ik - eta_ij_l_ik * eta_ik_l_ij)) + mi_l_ij * (-mj_h_j * (-eta_ij_l_ik * x4 + eta_ik_l_ik * x3) + mj_l_ik * (-eta_ij_h_j * x4 + eta_ik_h_j * x3) + x2 * (eta_ij_h_j * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_j)) - mi_l_ik * (-mj_h_j * (-eta_ij_l_ij * x4 + eta_ik_l_ij * x3) + mj_l_ij * (-eta_ij_h_j * x4 + eta_ik_h_j * x3) + x2 * (eta_ij_h_j * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_j)) + x1 * (mj_h_j * (eta_ij_l_ij * eta_ik_l_ik - eta_ij_l_ik * eta_ik_l_ij) - mj_l_ij * (eta_ij_h_j * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_j) + mj_l_ik * (eta_ij_h_j * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_j)));
+        delta_h_j  = _D * (mi_h_i * (-mj_l_ij * (-eta_ij_l_ik * x4 + eta_ik_l_ik * x3) + mj_l_ik * (-eta_ij_l_ij * x4 + eta_ik_l_ij * x3) + x2 * (eta_ij_l_ij * eta_ik_l_ik - eta_ij_l_ik * eta_ik_l_ij)) + mi_l_ij * (mj_h_i * (-eta_ij_l_ik * x4 + eta_ik_l_ik * x3) + mj_l_ik * (eta_ij_h_i * x4 - eta_ik_h_i * x3) - x2 * (eta_ij_h_i * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_i)) - mi_l_ik * (mj_h_i * (-eta_ij_l_ij * x4 + eta_ik_l_ij * x3) + mj_l_ij * (eta_ij_h_i * x4 - eta_ik_h_i * x3) - x2 * (eta_ij_h_i * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_i)) - x1 * (mj_h_i * (eta_ij_l_ij * eta_ik_l_ik - eta_ij_l_ik * eta_ik_l_ij) - mj_l_ij * (eta_ij_h_i * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_i) + mj_l_ik * (eta_ij_h_i * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_i)));
+        delta_l_ij = _D * (mi_h_i * (mj_h_j * (-eta_ij_l_ik * x4 + eta_ik_l_ik * x3) + mj_l_ik * (eta_ij_h_j * x4 - eta_ik_h_j * x3) - x2 * (eta_ij_h_j * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_j)) - mi_h_j * (mj_h_i * (-eta_ij_l_ik * x4 + eta_ik_l_ik * x3) + mj_l_ik * (eta_ij_h_i * x4 - eta_ik_h_i * x3) - x2 * (eta_ij_h_i * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_i)) - mi_l_ik * (mj_h_i * (eta_ij_h_j * x4 - eta_ik_h_j * x3) - mj_h_j * (eta_ij_h_i * x4 - eta_ik_h_i * x3) + x2 * (eta_ij_h_i * eta_ik_h_j - eta_ij_h_j * eta_ik_h_i)) + x1 * (mj_h_i * (eta_ij_h_j * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_j) - mj_h_j * (eta_ij_h_i * eta_ik_l_ik - eta_ij_l_ik * eta_ik_h_i) + mj_l_ik * (eta_ij_h_i * eta_ik_h_j - eta_ij_h_j * eta_ik_h_i)));
+        delta_l_ik = _D * (mi_h_i * (mj_h_j * (eta_ij_l_ij * x4 - eta_ik_l_ij * x3) - mj_l_ij * (eta_ij_h_j * x4 - eta_ik_h_j * x3) + x2 * (eta_ij_h_j * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_j)) - mi_h_j * (mj_h_i * (eta_ij_l_ij * x4 - eta_ik_l_ij * x3) - mj_l_ij * (eta_ij_h_i * x4 - eta_ik_h_i * x3) + x2 * (eta_ij_h_i * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_i)) + mi_l_ij * (mj_h_i * (eta_ij_h_j * x4 - eta_ik_h_j * x3) - mj_h_j * (eta_ij_h_i * x4 - eta_ik_h_i * x3) + x2 * (eta_ij_h_i * eta_ik_h_j - eta_ij_h_j * eta_ik_h_i)) - x1 * (mj_h_i * (eta_ij_h_j * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_j) - mj_h_j * (eta_ij_h_i * eta_ik_l_ij - eta_ij_l_ij * eta_ik_h_i) + mj_l_ij * (eta_ij_h_i * eta_ik_h_j - eta_ij_h_j * eta_ik_h_i)));
 
-//         h_i -= delta_h_i;
-//         h_j -= delta_h_j;
-//         l_ij -= delta_l_ij;
-//         l_ik -= delta_l_ik;
-//         steps += 1;
-//     }
+        h_i -= delta_h_i;
+        h_j -= delta_h_j;
+        l_ij -= delta_l_ij;
+        l_ik -= delta_l_ik;
+        steps += 1;
+    }
 
-//     if (h_i != h_i || h_j != h_j || l_ij != l_ij || l_ik != l_ik) h_i = h_j = l_ij = l_ik = NAN;
-//     if (delta_h_i * delta_h_i + delta_h_j * delta_h_j + delta_l_ij * delta_l_ij + delta_l_ik * delta_l_ik > eps * eps) h_i = h_j = l_ij = l_ik = NAN;
+    if (h_i != h_i || h_j != h_j || l_ij != l_ij || l_ik != l_ik) h_i = h_j = l_ij = l_ik = NAN;
+    if (delta_h_i * delta_h_i + delta_h_j * delta_h_j + delta_l_ij * delta_l_ij + delta_l_ik * delta_l_ik > eps * eps) h_i = h_j = l_ij = l_ik = NAN;
 
-//     calc_from_coeffs();
+    calc_from_coeffs();
 
-//     return steps;
-// }
+    return steps;
+}

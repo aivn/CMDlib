@@ -85,7 +85,7 @@ public:
      * @param max_steps Максимально допустимое количество шагов.
      * @return int Количество шагов метода Ньютона.
      */
-    // int calc_from_moments(double hi0, double hj0, double lij0, double lik0, double eps = 1e-8, int max_steps = 64);
+    int calc_from_moments(double hi0, double hj0, double lij0, double lik0, double eps = 1e-8, int max_steps = 64);
 };
 
 #endif  // CMDLIB_Z3_HPP

@@ -8,38 +8,43 @@ inline int sign(double val) {
 }
 
 double dawson(double x) {
-    static const int NMAX = 6;
-    static const double h = .4, A1 = 2.0 / 3.0, A2 = 0.4, A3 = 2.0 / 7.0;
+    static const int NMAX = 12;
+    static const double h = .2;
 
     // exp(-((2*i+1)*h)**2), 0 <= i < NMAX
-    static const double coeffs[6] = {
-        0.8521437889662113, 0.23692775868212165, 0.01831563888873418,
-        0.0003936690406550776, 2.352575200009771e-06, 3.90893843426485e-09
+    static const double coeffs[12] = {
+        0.9607894391523232,
+        0.697676326071031,
+        0.36787944117144233,
+        0.14085842092104495,
+        0.039163895098987066,
+        0.007907054051593435,
+        0.0011592291739045903,
+        0.00012340980408667956,
+        9.540162873079214e-06,
+        5.355347802793099e-07,
+        2.182957795125478e-08,
+        6.461431773106085e-10,
     };
 
-    if (abs(x) < 0.2) {  // Разложение в ряд.
-        double x2 = x * x;
-        return x * (1.0 - A1 * x2 * (1.0 - A2 * x2 * (1.0 - A3 * x2)));
-    } else {  // Sampling theorem.
-        double xx = fabs(x);
-        int n0    = 2 * int(0.5 * xx / h + 0.5);
-        double xp = xx - n0 * h;
+    double xx = fabs(x);
+    int n0    = 2 * int(0.5 * xx / h + 0.5);
+    double xp = xx - n0 * h;
 
-        double e1 = exp(2.0 * xp * h);
-        double e2 = e1 * e1;
-        double d1 = n0 + 1;
-        double d2 = d1 - 2.0;
+    double e1 = exp(2.0 * xp * h);
+    double e2 = e1 * e1;
+    double d1 = n0 + 1;
+    double d2 = d1 - 2.0;
 
-        double result = 0.0;
-        for (int i = 0; i < NMAX; i++) {
-            result += coeffs[i] * (e1 / d1 + 1.0 / (d2 * e1));
-            d1 = d1 + 2.0;
-            d2 = d2 - 2.0;
-            e1 = e1 * e2;
-        }
-
-        return 0.5641895835 * exp(-xp * xp) * sign(x) * result;
+    double result = 0.0;
+    for (int i = 0; i < NMAX; i++) {
+        result += coeffs[i] * (e1 / d1 + 1.0 / (d2 * e1));
+        d1 = d1 + 2.0;
+        d2 = d2 - 2.0;
+        e1 = e1 * e2;
     }
+
+    return 0.5641895835 * exp(-xp * xp) * sign(x) * result;
 }
 
 double erfcx(double x) {
