@@ -83,9 +83,9 @@ int main(){
 
     std::cout << "s l delta_1 t_1 delta_2 t_2\n";
     for(int r = rank_begin; r <= rank_end; r++){
-        aiw::sph_init_table(r+1);	
+        aiw::sph_init_table(r);	
         
-        int sz_sph = aiw::sph_vertex_num(r+1);
+        int sz_sph = aiw::sph_vertex_num(r);
         clock_t start = clock();
         mom_m<double> mom_direct = calc_directly(p1, p2, p3, lmbd_12, lmbd_13, lmbd_23, sz_sph, r);
         clock_t end = clock();
