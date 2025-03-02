@@ -120,6 +120,31 @@ int main(){
     aiw::sph_init_table(rank_end+1);	
     int sz_sph = aiw::sph_vertex_num(rank_end+1);
     mom_m_exact<double> exact;
+
+    
+    exact.sz_sphere = sz_sph;
+    exact.p1 = p1;
+    exact.p2 = p2;
+    exact.p3 = p3;
+    exact.p4 = p4;
+    exact.p5 = p5;
+    exact.p6 = p6;
+    exact.lmbd12 = lmbd12;
+    exact.lmbd13 = lmbd13;
+    exact.lmbd14 = lmbd14;
+    exact.lmbd15 = lmbd15;
+    exact.lmbd16 = lmbd16;
+    exact.lmbd23 = lmbd23;
+    exact.lmbd24 = lmbd24;
+    exact.lmbd25 = lmbd25;
+    exact.lmbd26 = lmbd26;
+    exact.lmbd34 = lmbd34;
+    exact.lmbd35 = lmbd35;
+    exact.lmbd36 = lmbd36;
+    exact.lmbd45 = lmbd45;
+    exact.lmbd46 = lmbd46;
+    exact.lmbd56 = lmbd56;
+    exact.calc();
     double exact_m = exact.m;
 
     std::cout << "s l delta_1 t_1 delta_2 t_2\n";
