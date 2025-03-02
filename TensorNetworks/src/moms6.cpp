@@ -63,7 +63,7 @@ struct mom_m_exact{
     T lmbd12, lmbd13, lmbd23, lmbd14, lmbd15, lmbd16, lmbd24, lmbd25, lmbd26, lmbd34, lmbd35, lmbd36, lmbd45, lmbd46, lmbd56;
     aiw::Vec<3, T> p1, p2, p3, p4, p5, p6;
 
-    T Z, m;
+    T Z{0}, m;
     aiw::Vec<3,T> m1;
     double t_calc = 0;
     int l_max;
@@ -85,7 +85,7 @@ struct mom_m_exact{
                                 const aiw::Vec<3> &m_6 = aiw::sph_vert(i6, rank); double dm_6 = aiw::sph_vert_area(i6, rank);
                                 double w = p1*m_1+p2*m_2+p3*m_3+p4*m_4+p5*m_5+p6*m_6;
                                 w += lmbd12*m_1*m_2+lmbd13*m_1*m_3+lmbd14*m_1*m_4+lmbd15*m_1*m_5+lmbd23*m_2*m_3+lmbd24*m_2*m_4+lmbd25*m_2*m_5+lmbd26*m_2*m_6;
-                                w += lmbd34*m_3*m_4+lmbd35*m_3*m_5+lmbd3*m_3*m_6+lmbd45*m_4*m_5+lmbd46*m_4*m_6+lmbd56*m_5*m_6;
+                                w += lmbd34*m_3*m_4+lmbd35*m_3*m_5+lmbd36*m_3*m_6+lmbd45*m_4*m_5+lmbd46*m_4*m_6+lmbd56*m_5*m_6;
                                 double f = exp(w);
                                 double dm = dm_1*dm_2*dm_3*dm_4*dm_5*dm_6;
                                 Z += f*dm;
@@ -99,8 +99,6 @@ struct mom_m_exact{
     
         m1 /= Z;
         m = sqrt(m1[0]*m1[0]+m1[1]*m1[1]+m1[2]*m1[2]);
-        moms.m = m;
-        moms.Z = Z;
 
         clock_t end = clock();
         t_calc += double(end - start) / CLOCKS_PER_SEC;
