@@ -16,7 +16,6 @@ private:
     int n = 0;
     std::vector<aiw::Vec<3, T>> p;
     std::map<std::set<int>, T> lambda;
-    int l_max = 2;
     int N_teta = 22;
     int N_fi = 22;
     std::vector<std::vector<int>> pows;
@@ -30,6 +29,7 @@ private:
     int rank;
     int sz_sph;
 public:
+    int l_max = 2;
     void set_lambda(int i, int j, T lambda_){
         std::set<int> s; s.insert(i); s.insert(j);
         lambda[s] = lambda_;
@@ -432,6 +432,5 @@ struct moments3{
         t_calc += double(end1 - end2) / CLOCKS_PER_SEC;
     }
 };
-
 
 #endif //HEIS_MAG_HPP
