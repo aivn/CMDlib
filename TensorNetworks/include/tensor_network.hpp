@@ -27,7 +27,14 @@ void find_correspondence(const std::vector<int> & glue1, int n1, std::map<int, i
     int n = n1;
     int g1 = glue1.size();
     int sep = n - g1;
-    std::vector<int> g = glue_vectors(glue1, v1, glue2, v2);
+    std::vector<int> glue1_(g1); std::vector<int> glue2_(g1);
+    for(int i = 0; i < g1; i++){
+        glue1_[i]=glue1[i];
+        glue2_[i]=glue2[i];
+    }
+    std::sort(glue1_.begin(), glue1_.end());
+    std::sort(glue2_.begin(), glue2_.end());
+    std::vector<int> g = glue_vectors(glue1_, v1, glue2_, v2);
     for(int i = 0; i < sep; i++){
         table1[g[i]] = i;
     }
@@ -68,12 +75,12 @@ public:
             int temp = t1_id; t1_id = t2_id; t2_id = temp;
         }
         std::set<int> s; s.insert(t1_id); s.insert(t2_id);
-        TensorNet::link & l = links[s];
+        TensorNet::link & l_ = links[s];
         Tensor<T> & t1 = tensors[t1_id]; Tensor<T> & t2 = tensors[t2_id];
-        Tensor<T> conv_tensor = tensor_convolution(t1, l.glue1, t2, l.glue2);
+        Tensor<T> conv_tensor = tensor_convolution(t1, l_.glue1, t2, l_.glue2);
 
         std::map<int, int> table1, table2;
-        find_correspondence(l.glue1, t1.get_D(), table1, l.glue2, t2.get_D(), table2);
+        find_correspondence(l_.glue1, t1.get_D(), table1, l_.glue2, t2.get_D(), table2);
 
         if(t1_id != t2_id){
             tensors.erase(t1_id); tensors.erase(t2_id);

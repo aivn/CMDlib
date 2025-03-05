@@ -99,7 +99,9 @@ struct mom_m_exact{
                 }
                 // std::cout << i2 << "\n";
             }
-		// std::cout << i1 << "\n";
+        if(rank == 2){
+            std::cout << i1 << "/" << sz_sphere << "\n";
+        }
         }
     
         m1 /= Z;
