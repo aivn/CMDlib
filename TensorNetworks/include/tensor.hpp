@@ -19,6 +19,7 @@ std::vector<int> off2pos(int off, const std::vector<int> & size, int D){
         int num = off%size[i];
         res[i] = num;
         off-=num;
+        off /= size[i];
     }
     return res;
 }

@@ -123,14 +123,14 @@ int main(){
     double lmbd56{3};
 
     int rank_begin = 0; int rank_end = 1;
-    int l_min = 0; int l_max = 3;
-    aiw::sph_init_table(rank_end+1);	
-    int sz_sph = aiw::sph_vertex_num(rank_end+1);
+    int l_min = 0; int l_max = 2;
+    aiw::sph_init_table(rank_end);	
+    int sz_sph = aiw::sph_vertex_num(rank_end);
     mom_m_exact<double> exact;
 
     
     exact.sz_sphere = sz_sph;
-    exact.rank = rank_end+1;
+    exact.rank = rank_end;
     exact.p1 = p1;
     exact.p2 = p2;
     exact.p3 = p3;
@@ -157,9 +157,9 @@ int main(){
 
     std::cout << "s l delta_1 t_1 delta_2 t_2\n";
     for(int r = rank_begin; r <= rank_end; r++){
-        aiw::sph_init_table(r);	
+        // aiw::sph_init_table(r);	
         
-        int sz_sph = aiw::sph_vertex_num(r);
+        // int sz_sph = aiw::sph_vertex_num(r);
         
         mom_m_exact<double> mom_direct;
         mom_direct.rank = r;
@@ -215,6 +215,7 @@ int main(){
             mom.lmbd56 = lmbd56;
             mom.calc();
             std::cout << sz_sph << " " << l << " " << mom.m-exact_m << " " << mom.t_calc  << " " << mom_direct.m-exact_m << " " << mom_direct.t_calc << "\n";
+            std::cout << sz_sph << " " << l << " " << (mom.Z-mom_direct.Z)/mom_direct.Z << " " << mom.t_calc  << " " << mom_direct.m-exact_m << " " << mom_direct.t_calc << "\n";
         }
     }
 
