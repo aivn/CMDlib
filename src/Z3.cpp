@@ -2,7 +2,8 @@
 
 #include "../include/Z3.hpp"
 #include "../include/special.hpp"
-#include <iostream>
+
+// #include <iostream>
 
 const int SIGMAS[2] = { -1, 1 };
 

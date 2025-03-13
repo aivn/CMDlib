@@ -52,7 +52,7 @@ private:
     double _h, _l, sqrt_l, _sqrt_l;
     double _exp_2h, _exp_2l;
     double cF2_norm, E12_norm, E1_norm, E_norm;
-    double m_llb, m_h_llb, eta_prmg;
+    // double m_llb, m_h_llb, eta_prmg;
     double m_h;
 
     void calc_base();
