@@ -3,7 +3,7 @@
 """
 import sympy as sp
 
-p = sp.Symbol("p")
+p = sp.Symbol("p", positive=True)
 px, py, pz = sp.symbols("p_x p_y p_z")
 m = sp.Symbol("\\left<m\\right>")
 

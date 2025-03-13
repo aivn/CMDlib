@@ -7,25 +7,6 @@ const int SIGMAS[2] = { -1, 1 };
 
 // =======================================================================================
 
-inline double L(double p) { return fabs(p) > 1e-1 ? 1 / tanh(p) - 1 / p : p / 3; }
-inline double dLdp(double p) {
-    double shp = sinh(p);
-    return fabs(p) > 1e-6 ? 1 / (p * p) - 1 / (shp * shp) : 1 / 3. - p * p / 15;
-}
-inline double invL(double M) {
-    if (fabsf(M) < 1e-6) return M * 3;
-    double p = 1.f;
-    for (int i = 0; i < 10; i++) {
-        double Lp = L(p);
-        if (p > 400 || fabs(Lp - M) < 1e-6) break;
-        p = p - (Lp - M) / dLdp(p);
-        if (fabs(p) < 1e-6) return p;
-    }
-    return p;
-}
-
-// =======================================================================================
-
 double cF2_norm_symmetrical(double h, double l) {
     double result = 0;
     for (int is1 = 0; is1 < 2; is1++)

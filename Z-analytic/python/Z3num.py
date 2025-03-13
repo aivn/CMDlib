@@ -5,11 +5,12 @@ from Z3backend import *
 import Z2num
 import numpy as np
 from scipy.integrate import quad
+import scipy.optimize as opt
 
 _z3 = Z3_symmetrical()
 
 
-def calc_from_coeffs_symmetrical(h_i, h_j, l_ij, l_ik):
+def calc_from_coeffs(h_i, h_j, l_ij, l_ik):
     """Функциональная обертка над Z3_symmetrical.calc_from_coeffs. Возвращает объект класса Z3_symmetrical."""
     _z3.h_i, _z3.h_j, _z3.l_ij, _z3.l_ik = h_i, h_j, l_ij, l_ik
     _z3.calc_from_coeffs()
@@ -38,10 +39,28 @@ def coeffs_symmetrical_approx(m, eta_ij, eta_ik):
     return rho_h_i * Z2_h_ij, rho_h_j * Z2_h_ik, rho_l_ij * Z2_l_ij, rho_l_ik * Z2_l_ik
 
 
-def find_coeffs_symmetrical(m, eta_ij, eta_ik):
+def find_coeffs_symmetrical(m, eta_ij, eta_ik, eps=1e-8, max_steps=64):
     """Функциональная обертка над Z3_symmetrical.calc_from_moments. Дополнительно использует аппроксимации коэффициентов. Возвращает объект класса Z3_symmetrical."""
     _z3.mi, _z3.mj, _z3.eta_ij, _z3.eta_ik = m, m, eta_ij, eta_ik
-    _z3.calc_from_moments(*coeffs_symmetrical_approx(m, eta_ij, eta_ik))
+    _z3.calc_from_moments(*coeffs_symmetrical_approx(m, eta_ij, eta_ik), eps=eps, max_steps=max_steps)
+    return _z3
+
+
+def find_coeffs_symmetrical_by_scipy(m, eta_ij, eta_ik):
+    """См. find_coeffs_symmetrical. Использует scipy для решения обратной задачи."""
+    def func(args):
+        _z3.h_i, _z3.h_j, _z3.l_ij, _z3.l_ik = args
+        _z3.calc_from_coeffs()
+        return [_z3.mi-m, _z3.mj-m, _z3.eta_ij-eta_ij, _z3.eta_ik-eta_ik]
+
+    result = opt.fsolve(func, coeffs_symmetrical_approx(m, eta_ij, eta_ik), full_output=True)
+    if result[2] == 1:
+        coeffs = result[0]
+    else:
+        coeffs = np.nan, np.nan, np.nan, np.nan
+
+    _z3.h_i, _z3.h_j, _z3.l_ij, _z3.l_ik = coeffs
+    _z3.calc_from_coeffs()
     return _z3
 
 # =======================================================================================
