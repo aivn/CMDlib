@@ -3,26 +3,9 @@
 #include "../include/Z2.hpp"
 #include "../include/special.hpp"
 
+// #include <iostream>
+
 const int SIGMAS[2] = { -1, 1 };
-
-// =======================================================================================
-
-inline double L(double p) { return fabs(p) > 1e-1 ? 1 / tanh(p) - 1 / p : p / 3; }
-inline double dLdp(double p) {
-    double shp = sinh(p);
-    return fabs(p) > 1e-6 ? 1 / (p * p) - 1 / (shp * shp) : 1 / 3. - p * p / 15;
-}
-inline double invL(double M) {
-    if (fabsf(M) < 1e-6) return M * 3;
-    double p = 1.f;
-    for (int i = 0; i < 10; i++) {
-        double Lp = L(p);
-        if (p > 400 || fabs(Lp - M) < 1e-6) break;
-        p = p - (Lp - M) / dLdp(p);
-        if (fabs(p) < 1e-6) return p;
-    }
-    return p;
-}
 
 // =======================================================================================
 
@@ -66,68 +49,73 @@ double E_symmetrical(double h, double l, bool arg_s1, bool arg_s2) {
 // =======================================================================================
 
 void Z2_symmetrical::calc_base() {
-    _h = fabs(h) > 1e-4 ? 1 / h : NAN;
-    _l = l > 1e-4 ? 1 / l : NAN;
+    // _h = fabs(h) > 1e-4 ? 1 / h : NAN;
+    // _l = l > 1e-4 ? 1 / l : NAN;
+    _h = 1 / h;
+    _l = 1 / l;
 
     sqrt_l  = sqrt(l);
-    _sqrt_l = sqrt_l > 1e-4 ? 1 / sqrt_l : NAN;
+    _sqrt_l = 1 / sqrt_l;
+    // _sqrt_l = sqrt_l > 1e-4 ? 1 / sqrt_l : NAN;
 
     _exp_2l = exp(-2 * l);
     _exp_2h = exp(-2 * h);
 
     m_h = NAN;
-    if (!std::isnan(_h) || !std::isnan(_l)) {
-        cF2_norm = _exp_2h * _exp_2h * dawson((.5) * M_SQRT2 * _sqrt_l * (h - 2 * l)) - 2 * _exp_2h * _exp_2l * dawson((.5) * M_SQRT2 * _sqrt_l * h) + dawson((.5) * M_SQRT2 * _sqrt_l * (h + 2 * l));
+    // if (!std::isnan(_h) || !std::isnan(_l)) {
+    cF2_norm = _exp_2h * _exp_2h * dawson((.5) * M_SQRT2 * _sqrt_l * (h - 2 * l)) - 2 * _exp_2h * _exp_2l * dawson((.5) * M_SQRT2 * _sqrt_l * h) + dawson((.5) * M_SQRT2 * _sqrt_l * (h + 2 * l));
 
-        E12_norm = _exp_2h * _exp_2h - 2 * _exp_2h * _exp_2l + 1;
-        E1_norm  = 1 - _exp_2h * _exp_2h;
-        E_norm   = _exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1;
-    } else sqrt_l = _sqrt_l = cF2_norm = E12_norm = E1_norm = E_norm = NAN;
+    E12_norm = _exp_2h * _exp_2h - 2 * _exp_2h * _exp_2l + 1;
+    E1_norm  = 1 - _exp_2h * _exp_2h;
+    E_norm   = _exp_2h * _exp_2h + 2 * _exp_2h * _exp_2l + 1;
+    // } else sqrt_l = _sqrt_l = cF2_norm = E12_norm = E1_norm = E_norm = NAN;
 
-    m_llb    = fabs(h) > 1e-4 ? (1 + _exp_2h) / (1 - _exp_2h) - _h : h / 3;
-    m_h_llb  = fabs(h) > 1e-4 ? m_llb * _h : 1. / 3.;
-    eta_prmg = l > 1e-4 ? (1 + _exp_2l) / (1 - _exp_2l) - _l : l / 3;
+    // m_llb    = fabs(h) > 1e-4 ? (1 + _exp_2h) / (1 - _exp_2h) - _h : h / 3;
+    // m_h_llb  = fabs(h) > 1e-4 ? m_llb * _h : 1. / 3.;
+    // eta_prmg = l > 1e-4 ? (1 + _exp_2l) / (1 - _exp_2l) - _l : l / 3;
 }
 
 void Z2_symmetrical::calc_m() {
-    if (fabs(h) > 1e-2 && l > 1e-1) {
-        m   = -.25 * (-M_SQRT2 * E12_norm * h * l + 2 * cF2_norm * h * h * sqrt_l + 2 * cF2_norm * l * sqrt_l) / (cF2_norm * h * l * sqrt_l);
-        m_h = m * _h;
-    } else if (l <= 1e-1) {
-        m   = m_llb + l * (m_llb - m_llb * m_llb * m_llb - 2 * m_llb * m_h_llb);
-        m_h = m_h_llb + l * (m_h_llb - m_h_llb * m_llb * m_llb - 2 * m_h_llb * m_h_llb);
-    } else {  // fabs(h) <= 1e-2
-        m_h = (1 + eta_prmg) / 3;
-        m   = h * m_h;
-    }
+    // if (fabs(h) > 1e-2 && l > 1e-1) {
+    m   = -.25 * (-M_SQRT2 * E12_norm * h * l + 2 * cF2_norm * h * h * sqrt_l + 2 * cF2_norm * l * sqrt_l) / (cF2_norm * h * l * sqrt_l);
+    m_h = m * _h;
+    // } else if (l <= 1e-1) {
+    //     m   = m_llb + l * (m_llb - m_llb * m_llb * m_llb - 2 * m_llb * m_h_llb);
+    //     m_h = m_h_llb + l * (m_h_llb - m_h_llb * m_llb * m_llb - 2 * m_h_llb * m_h_llb);
+    // } else {  // fabs(h) <= 1e-2
+    //     m_h = (1 + eta_prmg) / 3;
+    //     m   = h * m_h;
+    // }
 }
 
 void Z2_symmetrical::calc_eta() {
-    if (fabs(h) > 1e-2 && l > 1e-1) eta = .25 * (-M_SQRT2 * E12_norm * h * l * l + 2 * M_SQRT2 * E1_norm * l * l * l + 2 * cF2_norm * h * h * l * sqrt_l - 4 * cF2_norm * l * l * l * sqrt_l - 2 * cF2_norm * l * l * sqrt_l) / (cF2_norm * l * l * l * sqrt_l);
-    else if (l <= 1e-1) eta = m_llb * m_llb + l * (1 - m_llb * m_llb * m_llb * m_llb + 6 * m_h_llb * m_h_llb - 4 * m_h_llb);
-    else eta = eta_prmg;  // fabs(h) <= 1e-2
+    // if (fabs(h) > 1e-2 && l > 1e-1)
+    eta = .25 * (-M_SQRT2 * E12_norm * h * l * l + 2 * M_SQRT2 * E1_norm * l * l * l + 2 * cF2_norm * h * h * l * sqrt_l - 4 * cF2_norm * l * l * l * sqrt_l - 2 * cF2_norm * l * l * sqrt_l) / (cF2_norm * l * l * l * sqrt_l);
+    // else if (l <= 1e-1) eta = m_llb * m_llb + l * (1 - m_llb * m_llb * m_llb * m_llb + 6 * m_h_llb * m_h_llb - 4 * m_h_llb);
+    // else eta = eta_prmg;  // fabs(h) <= 1e-2
 }
 
 void Z2_symmetrical::calc_upsilon() {
-    if (l <= 1e-2 || (fabs(h) <= 1e-1 && l < .1)) {
-        double tmp = fabs(h) > 1e-4 ? -9 * m_h_llb * _h * _h + 6 * _h * _h - _h / m_llb : 0;
-        upsilon    = m_h_llb + l * (-m_llb * m_llb * m_h_llb + m_llb * m_llb / 2 - 4 * m_h_llb * m_h_llb + 3 * m_h_llb - .5 + tmp);
-        m_eta      = m * (1 - 2 * upsilon);
-    } else if (fabs(h) <= 1e-2 || (fabs(h) <= 1e-1 && l < .5)) {
-        upsilon = eta * _l / (eta + 1);
-        m_eta   = m * (1 - 2 * upsilon);
-    } else {
-        m_eta   = -.5 * (E12_norm * eta * (h * h) + E12_norm * eta * l + 2 * E12_norm * h * m + E12_norm - E_norm * (h * h) - 2 * E_norm * h * l * m - E_norm * l) / (E12_norm * h * l);
-        upsilon = .5 * (1 - m_eta / m);
-    }
+    // if (l <= 1e-2 || (fabs(h) <= 1e-1 && l < .1)) {
+    //     double tmp = fabs(h) > 1e-4 ? -9 * m_h_llb * _h * _h + 6 * _h * _h - _h / m_llb : 0;
+    //     upsilon    = m_h_llb + l * (-m_llb * m_llb * m_h_llb + m_llb * m_llb / 2 - 4 * m_h_llb * m_h_llb + 3 * m_h_llb - .5 + tmp);
+    //     m_eta      = m * (1 - 2 * upsilon);
+    // } else if (fabs(h) <= 1e-2 || (fabs(h) <= 1e-1 && l < .5)) {
+    //     upsilon = eta * _l / (eta + 1);
+    //     m_eta   = m * (1 - 2 * upsilon);
+    // } else {
+    m_eta   = -.5 * (E12_norm * eta * (h * h) + E12_norm * eta * l + 2 * E12_norm * h * m + E12_norm - E_norm * (h * h) - 2 * E_norm * h * l * m - E_norm * l) / (E12_norm * h * l);
+    upsilon = .5 * (1 - m_eta / m);
+    // }
 }
 
 void Z2_symmetrical::calc_eta2() {
-    if (l > 1e-2) eta2 = 1 + 2 * _l * (h * m * upsilon - eta);
-    else if (l <= 1e-2) {
-        double tmp = fabs(h) > 1e-1 ? 90 * m_h_llb * m_h_llb * _h * _h - 60 * m_h_llb * _h * _h + 10 * _h * _h : 0;
-        eta2       = 6 * m_h_llb * m_h_llb - 4 * m_h_llb + 1 + l * (-6 * m_llb * m_llb * m_h_llb * m_h_llb + 4 * m_llb * m_llb * m_h_llb + 12 * m_h_llb * m_h_llb - 4 * m_h_llb + tmp);
-    }
+    // if (l > 1e-2)
+    eta2 = 1 + 2 * _l * (h * m * upsilon - eta);
+    // else if (l <= 1e-2) {
+    //     double tmp = fabs(h) > 1e-1 ? 90 * m_h_llb * m_h_llb * _h * _h - 60 * m_h_llb * _h * _h + 10 * _h * _h : 0;
+    //     eta2       = 6 * m_h_llb * m_h_llb - 4 * m_h_llb + 1 + l * (-6 * m_llb * m_llb * m_h_llb * m_h_llb + 4 * m_llb * m_llb * m_h_llb + 12 * m_h_llb * m_h_llb - 4 * m_h_llb + tmp);
+    // }
 }
 
 void Z2_symmetrical::calc_mh2() {
@@ -139,14 +127,15 @@ void Z2_symmetrical::calc_psi0() {
 }
 
 void Z2_symmetrical::calc_Z2_norm() {
-    if (fabs(h) > 1e-2 && l > 1e-2) Z2_norm = M_SQRT2 * (2 * M_PI) * (2 * M_PI) * cF2_norm / (h * sqrt_l);
-    else if (l <= 1e-2) {
-        double Z = 4 * M_PI * (fabs(h) > 1e-4 ? .5 * (1 - _exp_2h) * _h : exp(-h) * (1 + h * h / 6));
-        Z2_norm  = Z * Z * (1 + l * eta);
-    } else {  // fabs(h) <= 1e-2
-        double Z = (4 * M_PI) * (4 * M_PI) * (l > 1e-4 ? .5 * (1 - _exp_2l) * _l : exp(-l) * (1 + l * l / 6));
-        Z2_norm  = Z * (1 + h * m);
-    }
+    // if (fabs(h) > 1e-2 && l > 1e-2)
+    Z2_norm = M_SQRT2 * (2 * M_PI) * (2 * M_PI) * cF2_norm / (h * sqrt_l);
+    // else if (l <= 1e-2) {
+    //     double Z = 4 * M_PI * (fabs(h) > 1e-4 ? .5 * (1 - _exp_2h) * _h : exp(-h) * (1 + h * h / 6));
+    //     Z2_norm  = Z * Z * (1 + l * eta);
+    // } else {  // fabs(h) <= 1e-2
+    //     double Z = (4 * M_PI) * (4 * M_PI) * (l > 1e-4 ? .5 * (1 - _exp_2l) * _l : exp(-l) * (1 + l * l / 6));
+    //     Z2_norm  = Z * (1 + h * m);
+    // }
 }
 
 // =======================================================================================
@@ -160,7 +149,7 @@ void Z2_symmetrical::calc_from_coeffs() {
     calc_mh2();
     calc_psi0();
     calc_Z2_norm();
-    if (eta < m * m || eta2 > 1) m = eta = upsilon = eta2 = mh2 = psi0 = NAN;
+    // if (eta < m * m || eta2 > 1) m = eta = upsilon = eta2 = mh2 = psi0 = NAN;
 }
 
 int Z2_symmetrical::calc_from_moments(double h0, double l0, double eps, int max_steps) {
@@ -186,12 +175,15 @@ int Z2_symmetrical::calc_from_moments(double h0, double l0, double eps, int max_
             if (h == 0 || l == 0) break;
             if (l < 0) break;
 
+            // std::cout << h << ' ' << l << '\n';
+
             calc_base();
 
             calc_m();
             calc_eta();
             calc_upsilon();
             calc_eta2();
+
             double expr_m_diff_h = eta - 2 * m * m - 2 * m_h + 1;
             double expr_m_diff_l = m_eta - m * eta;
 

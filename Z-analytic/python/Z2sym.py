@@ -7,8 +7,8 @@ import symbase
 
 SIGMAS = [-1, 1]
 
-h, l = sp.symbols("h \\lambda")
-hi, hj = sp.symbols("h_1 h_2")
+h, l = sp.symbols("h \\lambda", positive=True)
+hi, hj = sp.symbols("h_i h_j", positive=True)
 s1, s2 = symbase.SigmaSymbol("\\sigma_1"), symbase.SigmaSymbol("\\sigma_2")
 
 m, eta = sp.symbols("\\left<m\\right> \\left<\eta\\right>")
@@ -126,7 +126,7 @@ class E_symmetrical(Z2SigmasFunctionBase):
     def fdiff(self, argindex=1):
         factor = self.get_sigmas_factor()
         expr = (factor*_sigmas_expr_E_symmetrical).diff([h, l][argindex-1])
-        terms = symbase.collect_sigmas( expr, _sigmas_terms_symmetrical, [s1, s2])
+        terms = symbase.collect_sigmas(expr, _sigmas_terms_symmetrical, [s1, s2])
 
         args_subs = dict(zip([h, l], self.args[:-2]))
 

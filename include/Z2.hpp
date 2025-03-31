@@ -15,6 +15,27 @@
 #ifndef CMDLIB_Z2_HPP
 #define CMDLIB_Z2_HPP
 
+// =======================================================================================
+
+inline double L(double p) { return fabs(p) > 1e-1 ? 1 / tanh(p) - 1 / p : p / 3; }
+inline double dLdp(double p) {
+    double shp = sinh(p);
+    return fabs(p) > 1e-6 ? 1 / (p * p) - 1 / (shp * shp) : 1 / 3. - p * p / 15;
+}
+inline double invL(double M) {
+    if (fabsf(M) < 1e-6) return M * 3;
+    double p = 1.f;
+    for (int i = 0; i < 10; i++) {
+        double Lp = L(p);
+        if (p > 400 || fabs(Lp - M) < 1e-6) break;
+        p = p - (Lp - M) / dLdp(p);
+        if (fabs(p) < 1e-6) return p;
+    }
+    return p;
+}
+
+// =======================================================================================
+
 double cF2_norm_symmetrical(double h, double l);
 double cF2_symmetrical(double h, double l);
 
@@ -31,7 +52,7 @@ private:
     double _h, _l, sqrt_l, _sqrt_l;
     double _exp_2h, _exp_2l;
     double cF2_norm, E12_norm, E1_norm, E_norm;
-    double m_llb, m_h_llb, eta_prmg;
+    // double m_llb, m_h_llb, eta_prmg;
     double m_h;
 
     void calc_base();
