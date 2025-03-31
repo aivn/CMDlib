@@ -5,12 +5,12 @@
 template<typename T>
 struct mom_m{
     int rank, sz_sphere;
-    heis_mag<T> Z_t, m1_t;
+    heis_mag<T> Z_t, m1_t, eta_t;
 
     T lmbd12, lmbd13, lmbd23, lmbd14, lmbd15, lmbd16, lmbd24, lmbd25, lmbd26, lmbd34, lmbd35, lmbd36, lmbd45, lmbd46, lmbd56;
     aiw::Vec<3, T> p1, p2, p3, p4, p5, p6;
 
-    T Z, m;
+    T Z, m, eta;
     aiw::Vec<3,T> m1;
     double t_calc = 0;
     int l_max;
@@ -46,12 +46,19 @@ struct mom_m{
         // std::cout << "build!\n";
         m1_t = Z_t;
         m1_t.add_index(0, 1, 0);
+        eta_t = m1_t;
+        eta_t.add_index(1, 1, 0);
+
         Z_t.calc(); Z = (Z_t.get_result())[0];
         m1_t.calc();
+        eta_t.calc();
 
         Tensor<T> m_res = m1_t.get_result(); 
+        Tensor<T> eta_res = eta_t.get_result(); 
         m1[0] = m_res[0]/Z; m1[1] = m_res[1]/Z; m1[2] = m_res[2]/Z;
         m = sqrt(m1[0]*m1[0]+m1[1]*m1[1]+m1[2]*m1[2]);
+        eta_res = eta_res/Z;
+        eta = eta_res[0]+eta_res[4]+eta_res[8];
         clock_t end = clock();
         t_calc += double(end - start) / CLOCKS_PER_SEC;
     }
@@ -67,6 +74,7 @@ struct mom_m_exact{
 
     T Z{0}, m;
     aiw::Vec<3,T> m1;
+    double eta = 0;
     double t_calc = 0;
     int l_max;
 
@@ -92,6 +100,7 @@ struct mom_m_exact{
                                 double dm = dm_1*dm_2*dm_3*dm_4;
                                 Z += f*dm;
                                 m1 += f*m_1*dm;
+                                eta += f*m_1*m_2*dm;
                             // }
                         // }
                     }
@@ -105,6 +114,7 @@ struct mom_m_exact{
         }
     
         m1 /= Z;
+        eta /= Z;
         m = sqrt(m1[0]*m1[0]+m1[1]*m1[1]+m1[2]*m1[2]);
 
         clock_t end = clock();
@@ -122,7 +132,7 @@ int main(){
     double lmbd45{1}, lmbd46{2};
     double lmbd56{3};
 
-    int rank_begin = 0; int rank_end = 1;
+    int rank_begin = 1; int rank_end = 1;
     int l_min = 0; int l_max = 2;
     aiw::sph_init_table(rank_end);	
     int sz_sph = aiw::sph_vertex_num(rank_end);
@@ -154,6 +164,7 @@ int main(){
     exact.lmbd56 = lmbd56;
     exact.calc();
     double exact_m = exact.m;
+    double exact_eta = exact.eta;
 
     std::cout << "s l delta_1 t_1 delta_2 t_2\n";
     for(int r = rank_begin; r <= rank_end; r++){
@@ -214,8 +225,9 @@ int main(){
             mom.lmbd46 = lmbd46;
             mom.lmbd56 = lmbd56;
             mom.calc();
-            std::cout << sz_sph << " " << l << " " << mom.m-exact_m << " " << mom.t_calc  << " " << mom_direct.m-exact_m << " " << mom_direct.t_calc << "\n";
-            std::cout << sz_sph << " " << l << " " << (mom.Z-mom_direct.Z)/mom_direct.Z << " " << mom.t_calc  << " " << mom_direct.m-exact_m << " " << mom_direct.t_calc << "\n";
+            // std::cout << sz_sph << " " << l << " " << (mom.m-exact_m)/exact_m << " " << mom.t_calc  << " " << (mom_direct.m-exact_m)/exact_m << " " << mom_direct.t_calc << "\n";
+            // std::cout << sz_sph << " " << l << " " << (mom.Z-mom_direct.Z)/mom_direct.Z << " " << mom.t_calc  << " " << mom_direct.m-exact_m << " " << mom_direct.t_calc << "\n";
+            std::cout << sz_sph << " " << l << " " << (mom.m-exact_m)/exact_m << " " << mom.t_calc  << " " << (mom.eta-exact_eta)/exact_eta << " " << mom_direct.t_calc << "\n";
         }
     }
 

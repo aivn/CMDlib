@@ -4,16 +4,18 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <cstdint>
+#include <set>
 
-int pos2off(const std::vector<int> & v, const std::vector<int> & mul, int D){
-    int res = 0;
+uint64_t pos2off(const std::vector<int> & v, const std::vector<uint64_t> & mul, int D){
+    uint64_t res = 0;
     for(int i = 0; i < D; i++){
         res += v[i]*mul[i];
     }
     return res;
 }
 
-std::vector<int> off2pos(int off, const std::vector<int> & size, int D){
+std::vector<int> off2pos(uint64_t off, const std::vector<int> & size, int D){
     std::vector<int> res(D);
     for(int i = 0; i < D; i++){
         int num = off%size[i];
@@ -73,13 +75,16 @@ template <typename T>
 class Tensor{
     std::vector<T> data;
     int D = 0;
-    int sz;
+    uint64_t sz;
     std::vector<int> size;
-    std::vector<int> mul;
+    std::vector<uint64_t> mul;
     std::vector<int> marks;
+    // bool perm = false;
+    // std::vector<int> permutation;
 public:
     Tensor<T> & operator = (const Tensor<T> & t){
         data = t.data; D = t.D; sz = t.sz; size = t.size; mul = t.mul; marks = t.marks;
+        // perm = t.perm; permutation = t.permutation;
         return *this;
     }
 
@@ -107,8 +112,8 @@ public:
 
     int get_D() const { return D; }
     std::vector<int> get_size() const { return size; }
-    std::vector<int> get_mul() const { return mul; }
-    int get_sz() const { 
+    std::vector<uint64_t> get_mul() const { return mul; }
+    uint64_t get_sz() const { 
         return sz; 
     }
     void set_mark(int index, int mark){ marks[index] = mark; }
@@ -125,9 +130,47 @@ public:
         return res;
     }
 
+    double FROB_NORM() const{
+        double res = 0;
+        typename Tensor<T>::iterator it = this->begin();
+        typename Tensor<T>::iterator it_end = this->end();
+        while(it != it_end){
+            T val = (*this)[it.get_pos()];
+            res += real(val*std::conj(val));
+            it++;
+        }
+        return sqrt(res);
+    }
+
+    void rebuild_with_permutation(std::vector<int> perm_){
+        Tensor<T> new_tensor = *this;
+        std::vector<int> new_size(D);
+        for(int i = 0; i < D; i++){
+            new_size[perm_[i]] = size[i];
+        }
+        new_tensor.init(new_size);
+        
+        for(int i = 0; i < D; i++){
+            new_tensor.set_mark(perm_[i], marks[i]);
+        }
+        
+        typename Tensor<T>::iterator it = this->begin();
+        typename Tensor<T>::iterator it_end = this->end();
+        while(it != it_end){
+            std::vector<int> v = it.get_pos();
+            std::vector<int> w(D);
+            for(int i = 0; i < D; i++){
+                w[perm_[i]] = v[i];
+            }
+            new_tensor[w] = this->operator[](v);
+            it++;
+        }
+        *this = new_tensor;
+    }
+
     class iterator : public std::iterator<std::input_iterator_tag, T> {
     private:
-        int off;
+        uint64_t off;
         std::vector<int> v;
         std::vector<int> w;
         bool fixed_indexes = false;
@@ -310,7 +353,7 @@ inline Tensor<T> tensor_convolution(const Tensor<T> & t, const std::vector<int> 
 
         if(!b){
             table1[count1++] = i;
-            size1.push_back(t_size[v3_sorted[i]]);
+            size1.push_back(t_size[i]);
         }else{
             count++;
         }
@@ -343,6 +386,58 @@ inline Tensor<T> tensor_convolution(const Tensor<T> & t, const std::vector<int> 
     }
 
     return t1;
+}
+
+template <typename T1, typename T2>
+Tensor<decltype(T1()+T2())> operator + (const Tensor<T1> & t1, const Tensor<T2> & t2){
+    Tensor<decltype(T1()+T2())> res;
+    res.init(t1.get_size());
+    typename Tensor<T1>::iterator it = t1.begin();
+    typename Tensor<T1>::iterator it_end = t1.end();
+    while(it != it_end){
+        std::vector<int> v = it.get_pos();
+        T1 val1 = t1[v];
+        T2 val2 = t2[v];
+        res[v] = val1+val2;
+        it++;
+    }
+    return res;
+}
+
+template <typename T1, typename T2>
+Tensor<decltype(T1()-T2())> operator - (const Tensor<T1> & t1, const Tensor<T2> & t2){
+    Tensor<decltype(T1()-T2())> res;
+    res.init(t1.get_size());
+    typename Tensor<T1>::iterator it = t1.begin();
+    typename Tensor<T1>::iterator it_end = t1.end();
+    while(it != it_end){
+        std::vector<int> v = it.get_pos();
+        T1 val1 = t1[v];
+        T2 val2 = t2[v];
+        res[v] = val1-val2;
+        it++;
+    }
+    return res;
+}
+
+template <typename T1, typename T2>
+Tensor<decltype(T1()*T2())> operator * (const Tensor<T1> & t, T2 a){
+    Tensor<decltype(T1()*T2())> res;
+    res.init(t.get_size());
+    typename Tensor<T1>::iterator it = t.begin();
+    typename Tensor<T1>::iterator it_end = t.end();
+    while(it != it_end){
+        std::vector<int> v = it.get_pos();
+        res[v] = t[v]*a;
+        it++;
+    }
+    return res;
+}
+
+template <typename T1, typename T2>
+Tensor<decltype(T1()/T2())> operator / (const Tensor<T1> & t, T2 a){
+    Tensor<decltype(T1()*T2())> res;
+    return t*(1./a);
 }
 
 #endif //TENSOR_HPP

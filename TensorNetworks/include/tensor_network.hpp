@@ -90,15 +90,16 @@ public:
         
         tensors[last_id++] = conv_tensor;
         const std::set<int> s1 = connections[t1_id]; const std::set<int> s2 = connections[t2_id];
+        int new_id = last_id-1;
         for(int i : s1){
             if(i != t2_id){
-                std::set<int> s; s.insert(i); s.insert(t1_id);
-                TensorNet::link & l = links[s];
+                std::set<int> st; st.insert(i); st.insert(t1_id);
+                TensorNet::link & l = links[st];
                 if(i == l.t2_id){
                     l.glue1.swap(l.glue2);
                     l.t1_id = l.t2_id;
                 }
-                l.t2_id = last_id-1;
+                l.t2_id = new_id;
                 std::vector<int> new_glue;
                 for(int j : l.glue2){
                     new_glue.push_back(table1[j]); 
@@ -106,15 +107,15 @@ public:
                 l.glue2 = new_glue;
                 std::set<int> s_; s_.insert(l.t1_id); s_.insert(l.t2_id);
                 links[s_] = l;  
-                links.erase(s);
+                links.erase(st);
             }
         }
 
         for(int i : s1){
             connections[i].erase(t1_id);
             if(i != t2_id){
-                connections[i].insert(last_id-1);
-                connections[last_id-1].insert(i);
+                connections[i].insert(new_id);
+                connections[new_id].insert(i);
             }
         }
         std::set<int> empty;
@@ -123,15 +124,17 @@ public:
         if(t1_id != t2_id){
             for(int i : s2){
                 if(i != t1_id){
-                    std::set<int> s; s.insert(i); s.insert(t2_id);
-                    TensorNet::link & l = links[s];
+                    std::set<int> st; st.insert(i); st.insert(t2_id);
+                    TensorNet::link & l = links[st];
                     int ind1,ind2;
                     ind1 = l.t1_id;
                     if(i == l.t2_id){
                         l.glue1.swap(l.glue2);
                         ind1 = l.t2_id;
+                        l.t1_id = ind1;
                     }
-                    ind2 = last_id-1;
+                    ind2 = new_id;
+                    l.t2_id = ind2;
                     std::set<int> s_; s_.insert(ind1); s_.insert(ind2);
                     std::map<std::set<int>, TensorNet::link>::iterator it = links.find(s_);
                     bool b = (it!=links.end());
@@ -149,11 +152,12 @@ public:
                             l_.glue2.push_back(new_glue[j]);
                         }
                         l_.n += n_;
-                        links.erase(s);
                     }else{
                         l.glue2 = new_glue;
+                        links[s_] = l;  
+                        l.glue2 = new_glue;
                     }
-
+                    links.erase(st);
                 }
             }
 

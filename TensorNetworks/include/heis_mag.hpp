@@ -9,6 +9,7 @@
 #include <aiwlib/sphere>
 
 #define sphere
+// #define no_sphere
 
 template <typename T>
 class heis_mag{
@@ -16,6 +17,7 @@ private:
     int n = 0;
     std::vector<aiw::Vec<3, T>> p;
     std::map<std::set<int>, T> lambda;
+    std::map<std::set<int>, std::pair<int,int>> arrows;
     int N_teta = 22;
     int N_fi = 22;
     std::vector<std::vector<int>> pows;
@@ -41,6 +43,12 @@ public:
             v[i] = sf.Infeld_func(lambda_, i+0.5, 0.001);
         } 
         infeld[s] = v;
+        std::pair<int, int> & pair_ = arrows[s];
+        pair_.first = i; pair_.second = j;
+    }
+
+    void set_N_teta_N_fi(int N_teta_, int N_fi_){
+        N_teta = N_teta_; N_fi_ = N_fi;
     }
 
     void set_p(int i, const aiw::Vec<3, T> & v_){
@@ -49,6 +57,10 @@ public:
 
     std::vector<int> get_tensor_marks(int ID){
         return (TN.get_tensor(ID)).get_marks();
+    }
+
+    Tensor<std::complex<T>> get_tensor(int ID){
+        return TN.get_tensor(ID);
     }
 
     void init(int n_, int rank_, int sz_sphere_){
@@ -83,7 +95,9 @@ public:
     Tensor<std::complex<T>> calc_tensor(int i){
         std::map<std::set<int>, int> & ord = order[i];
         Tensor<std::complex<T>> res;
-        // T d_teta = M_PI/N_teta; T d_fi = 2*M_PI/N_fi;
+        #ifdef no_sphere
+        T d_teta = M_PI/N_teta; T d_fi = 2*M_PI/N_fi;
+        #endif
         std::set<int> & c = connections[i];
         int k = c.size(); int pp = pows[i].size();
         std::vector<int> tens_ids;
@@ -152,7 +166,8 @@ public:
                             ord[s] = ind;
                         }
                         T lmbd = lambda[s];
-                        bool b = (ind_i > i);
+                        std::pair<int,int> & pair_ = arrows[s];
+                        bool b = (i == pair_.first);
                         int l, m; calc_lm(v[ind], l, m);
                         r *= b? cop.Y(l, m, teta, fi)*infeld[s][l]*pow(2*M_PI, 1.5)/sqrt(lmbd):conj(cop.Y(l, m, teta, fi));
                     }
@@ -204,14 +219,23 @@ public:
     void include_tensor(int j, const Tensor<std::complex<T>> & t, bool replace = false){
         std::map<std::set<int>, int> & ord_j = order[j];
         std::map<int, TensorNet::link> links;
+        std::set<int> & s1 = connections[j];
         for(int i = 0; i < j; i++){
             std::set<int> s; s.insert(i); s.insert(j);
-            std::map<std::set<int>, int> & ord_i = order[i];
-            int indj = ord_j[s]; int indi = ord_i[s];
-            TensorNet::link & l = links[i]; 
-            l.glue1 = std::vector<int>{indi}; 
-            l.glue2 = std::vector<int>{indj}; 
-            l.n=1;
+            bool b = s1.find(i) != s1.end();
+
+            if(b){
+                std::map<std::set<int>, int> & ord_i = order[i];
+                int indj = ord_j[s]; int indi = ord_i[s];
+                TensorNet::link & l = links[i]; 
+                l.glue1 = std::vector<int>{indi}; 
+                l.glue2 = std::vector<int>{indj};
+                l.t1_id = i;
+                l.t2_id = j;
+                l.n=1;
+            }
+
+            
         }
         if(replace){
             TN.replace_tensor(t, j);
@@ -272,6 +296,7 @@ public:
         infeld = h.infeld;
         rank = h.rank;
         sz_sph = h.sz_sph;
+        arrows = h.arrows;
         return *this;
     }
 };
