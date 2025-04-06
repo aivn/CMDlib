@@ -26,22 +26,24 @@ double calc_p(double M);
 float calc_mu_p(float M2);
 float calc_nu_p(float M2);
 //------------------------------------------------------------------------------
-struct LLBCoeff {
+struct LLBCoeff {	
 	static int n_b; 
 	static aiw::Vecf<3> nK;  ///< input parametr n_K
 
-	float M; 
+	float M, M2; 
 	float mu_p;
 	float nu_p;
 
 	aiw::Vecf<3> Phi;
 	aiw::Vecf<3> Theta;
 	aiw::Matr<3, 3, float> XI;
-	float Q;
-	float S;
+	float Q_MFA;
+	float S1;
 	
 	void init(float M_, bool exact=false);
 	void init(const aiw::Vecf<3> &M_, bool exact=false);
+private:
+	void scalar_init(bool exact);
 };
 //------------------------------------------------------------------------------
 #endif // CMDLIB_LLB_COEFF_HPP

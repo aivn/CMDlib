@@ -26,38 +26,33 @@ float calc_nu_p(float M2){
 int LLBCoeff::n_b; 
 aiw::Vecf<3> LLBCoeff::nK; 
 //------------------------------------------------------------------------------
-void LLBCoeff::init(float M_, bool exact){
-	M = fabsf(M_); float M2 = M*M;
+void LLBCoeff::scalar_init(bool exact){
 	if(exact){
 		double p = calc_p(M);
 		mu_p = M>1e-6? M/p: calc_mu_p(M2);
 		nu_p = M>1e-6? (1-3*mu_p)/(M*M): calc_nu_p(M2);
-		S = log(4*M_PI*sinh(p)) - p*M;
+		S1 = M>1e-6? log(4*M_PI*sinh(p)/p) - p*M: log(4*M_PI);
 	} else {
 		mu_p = calc_mu_p(M2);
 		nu_p = calc_nu_p(M2);
-		S = log(4*M_PI*sinh(M/mu_p)) - M2/mu_p;  // аппроксимация?
+		float p = M/mu_p; 
+		S1 = M>1e-6? log(4*M_PI*sinh(p)/p) - p*M: log(4*M_PI);
 	}
+	Q_MFA = -mu_p*(3*mu_p - (n_b-1)*M2 - 2);
+}
+//------------------------------------------------------------------------------
+void LLBCoeff::init(float M_, bool exact){
+	M = fabsf(M_); M2 = M*M;
+	scalar_init(exact);
 	Phi = Vecf<1>();
 	Theta = vecf(0, 0, 2*M*mu_p*nu_p);
 	XI.fill(); XI(2, 2) = 2*mu_p;
-
-	Q = -mu_p*(3*mu_p - (n_b-1)*M2 - 2);
 	// float S;
 }
 //------------------------------------------------------------------------------
 void LLBCoeff::init(const aiw::Vecf<3> &M_, bool exact){
-	float M2 = M_*M_, MnK = M_*nK; M = sqrt(M2); 
-	if(exact){
-		double p = calc_p(M);
-		mu_p = M>1e-6? M/p: calc_mu_p(M2);
-		nu_p = M>1e-6? (1-3*mu_p)/(M*M): calc_nu_p(M2);
-		S = log(4*M_PI*sinh(p)) - p*M;
-	} else {
-		mu_p = calc_mu_p(M2);
-		nu_p = calc_nu_p(M2);
-		S = log(4*M_PI*sinh(M/mu_p)) - M2/mu_p;  // аппроксимация?
-	}
+	M2 = M_*M_; M = sqrt(M2); float MnK = M_*nK; 
+	scalar_init(exact);
 	Phi = MnK*nu_p*(M_%nK);
 	if(M>1e-6) Theta = mu_p*nu_p*(5*MnK*MnK/M2*M_ - M_ - 2*MnK*nK) - M_%(M_%nK)*(MnK/M2);
 	else Theta = vecf(0.f); // ???
@@ -66,8 +61,6 @@ void LLBCoeff::init(const aiw::Vecf<3> &M_, bool exact){
 		XI(i, i) = 1-mu_p - M_[i]*M_[i]*nu_p;
 		for(int j=0; j<i; j++) XI(i, j) = XI(j, i) = -M_[i]*M_[j]*nu_p;
 	}
-	
-	Q = -mu_p*(3*mu_p - (n_b-1)*M2 - 2);
 }
 //------------------------------------------------------------------------------
 
