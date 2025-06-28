@@ -94,88 +94,11 @@ namespace CMD{
 				T Q0 = Q_MFA<T>(M, n_b), ec = M2 + (1-M2)*zeta_c,  Uc = Upsilon<T>(M, zeta_c, zeta_c, ec, eta_c), Q1 = n_b*ec*Uc;
 				
 				T dzeta = 1e-4f, e1 = M2 + (1-M2)*(zeta_c+dzeta), z1 = (e1-M2)/(1-M2);
-				T dQdz = (n_b*e1*Upsilon(M, z1, zeta_c, e1, eta_c) - Q1)/dzeta; // тут все таки нужна аналитическая производная
+				T dQdz = (n_b*e1*Upsilon(M, z1, zeta_c, e1, eta_c) - Q1)/dzeta; // тут все таки нужна аналитическая производная ?
+				// T dQdz = n_b*((1-M2)*Uc + ec*3*mu_p*_1zc*( (calc_diff_Mu(zeta_c)-mu_zc*_1zc)*(1+dUM) + mu_zc*dUMz*(1-2*zeta_c) ));
 					
 				T B = (Q0+dQdz*zeta_c-Q1)/(zeta_c*zeta_c), A = dQdz - 2*B*zeta_c;   Q = Q0 + (A + B*zeta)*zeta;
-				// T B = (Q0+dQdz*zeta_c-Q1)/(2*zeta_c*zeta_c*zeta_c), A = dQdz - 3*B*zeta_c*zeta_c;	Q = Q0 + (A + B*zeta*zeta)*zeta;
-			} else {
-				// T Mc2 = (eta-eta_c)/(1-eta_c);
-				Q = n_b*eta*U; // - .1*(Mc2-M2)*(Mc2-1.25*M2)*(1-eta); // *(eta-eta_c)/(1-eta_c); // *(1 - 0.2*(1-zeta)*(zeta-zeta_c)*(1-sqrt(fabs(M))));
-				/*
-				T Mc2 = (eta-eta_c)/(1-eta_c);
-				if(Mc2>0){
-					T Mc = sqrtf(Mc2), m = 1.f - M/Mc, eta2 = eta*eta, m2 = m*m;
-					// Q += -0.2186f*eta2*(1-eta)*m*(1+1.3699f*m+1.1961f*eta-10.3134f*m*eta+4.6053f*m2+3.9136f*eta2) + .01f*m;
-					Q += .01f*m;
-				}
-				*/
-				
-				
-				/*
-				T Mc = sqrtf((eta-eta_c)/(1-eta_c));  // eta_c = (eta-Mc2)/(1-Mc2)  ==>  eta_c - Mc2*eta_c = eta - Mc2  ==>  Mc2 = (eta-eta_c)/(1-eta_c)
-				T a = 0, b = .999;  // if(a<0){ a = 0; } if(b>1){ b = 1; }
-				for(int i=0; i<10; i++){
-					T zc = eta_c -.135f*sqrtf(fabsf(Mc))*Mc +.123f*Mc*Mc*Mc;
-					if(zc<(eta-Mc*Mc)/(1-Mc*Mc)) a = Mc; else b = Mc;
-					Mc = (a+b)/2;
-				}
-				T Mc2 = Mc*Mc, zc = (eta-Mc2)/(1-Mc2), Uc = Upsilon<T>(Mc, zc, zc);
-				Q = n_b*eta*Uc - .02f*(1-M2/Mc2); // *(1 - 0.4*(1-zeta)*(zeta-zeta_c)*(Mc-M)); // n_b*eta*(U*.25+Uc*.75);
-				*/
-				// U = Uc;
-			}			
-			/*
-			T dUM = (0.0256f+(0.0376f-0.1076f*M2)*M2), dUMz = dUM/(zeta_c*(1-zeta_c)); // *zeta_c*(1-zeta_c));
-			// T dUM = 0, dUMz = dUM/(zeta_c*(1-zeta_c)); // *zeta_c*(1-zeta_c));
-			// T wM = 0, dUMz2 = dUMz/(zeta_c*(1-zeta_c))*wM;  dUMz *= 1-wM; 
-			// U = 3*mu_p*calc_Mu<T>(zeta)/(1+zeta)*(1+(dUMz + dUMz2*zeta*(1-zeta))*zeta*(1-zeta)); //   + q*zeta*(zeta-zeta_c)*(1-zeta); // *zeta*(1-zeta));			
-			U = 3*mu_p*calc_Mu<T>(zeta)/(1+zeta)*(1+dUMz*zeta*(1-zeta)); //   + q*zeta*(zeta-zeta_c)*(1-zeta); // *zeta*(1-zeta));			
-
-			// V0
-			if(zeta<=zeta_c){			
-				T ec = M2 + (1-M2)*zeta_c, mu_zc = calc_Mu<T>(zeta_c), _1zc = 1/(1+zeta_c); 
-				T Q0 = Q_MFA<T>(M, n_b), Uc = 3*mu_p*mu_zc*_1zc*(1+dUM), Q1 = n_b*ec*Uc;
-				
-				// T dzeta = 1e-4f, e1 = M2 + (1-M2)*(zeta_c+dzeta), z1 = (e1-M2)/(1-M2);
-				// T dQdz = (n_b*e1*(3*mu_p*calc_Mu<T>(z1)/(1+z1)*(1+(dUMz+dUMz2*z1*(1-z1))*z1*(1-z1))) - Q1)/dzeta; // тут все таки нужна аналитическая производная
-				T dQdz = n_b*((1-M2)*Uc + ec*3*mu_p*_1zc*( (calc_diff_Mu(zeta_c)-mu_zc*_1zc)*(1+dUM) + mu_zc*dUMz*(1-2*zeta_c) ));
-					
-				T B = (Q0+dQdz*zeta_c-Q1)/(zeta_c*zeta_c), A = dQdz - 2*B*zeta_c;   Q = Q0 + (A + B*zeta)*zeta;
-				// T B = (Q0+dQdz*zeta_c-Q1)/(2*zeta_c*zeta_c*zeta_c), A = dQdz - 3*B*zeta_c*zeta_c;	Q = Q0 + (A + B*zeta*zeta)*zeta;
-			} else {  // Q = n_b*eta*U; // *(1 - 0.2*(1-zeta)*(zeta-zeta_c)*(1-sqrt(fabs(M))));
-
-				
-				T Mc = (eta-eta_c)/(1-eta_c);  // eta_c = (eta-Mc2)/(1-Mc2)  ==>  eta_c - Mc2*eta_c = eta - Mc2  ==>  Mc2 = (eta-eta_c)/(1-eta_c)
-				T a = 0, b = .999;  // if(a<0){ a = 0; } if(b>1){ b = 1; }
-				for(int i=0; i<10; i++){
-					T zc = eta_c -.135f*sqrtf(fabsf(Mc))*Mc +.123f*Mc*Mc*Mc;
-					if(zc<(eta-Mc*Mc)/(1-Mc*Mc)) a = Mc; else b = Mc;
-					Mc = (a+b)/2;
-				}
-				T Mc2 = Mc*Mc, zc = (eta-Mc2)/(1-Mc2), mu_zc = calc_Mu<T>(zc), _1zc = 1/(1+zc); 
-				T Uc = 3*calc_Mu<T>(Mc)*mu_zc*_1zc*(1+(0.0256f+(0.0376f-0.1076f*Mc2)*Mc2));
-				Q = n_b*eta*Uc; // *(1 - 0.4*(1-zeta)*(zeta-zeta_c)*(Mc-M)); // n_b*eta*(U*.25+Uc*.75);
-				
-				U = Uc;
-			}
-			*/
-			// Q *= 1 - .1*sqrt(fabs(M))*zeta*(zeta-zeta_c)*(1-zeta)-.2*M*M*(zeta>zeta_c)*(zeta-zeta_c)*(zeta-zeta_c)*(1-zeta);
-			// if(zeta>zeta_c) U *= 1-(zeta-zeta_c)*(1-zeta)*(1-M);
-			// Q *= 1 - sqrt(fabs(M))*zeta*(zeta-zeta_c)*(1-zeta);
-
-			// if(zeta<zeta_c) Q *= 1 - .25*sqrt(fabs(M))*zeta*(zeta-zeta_c)*(1-zeta);
-			// else Q *= 1 + q*(zeta-zeta_c)*(zeta-zeta_c)*(1-eta*eta*eta/2); //sqrt(fabs(M)));
-
-			/* 
-			else{
-				// T sc = eta>eta_c*1.45f ? std::max(-2.,-.05/(eta-eta_c*1.45)): -2.;  // BCC
-				T sc = eta>eta_c*1.5f ? std::max(-2.,-.05/(eta-eta_c*1.5)): -2.;  // BCC
-				// T sc = eta>eta_c*1.2 ? std::max(-2.,-.025/(eta-eta_c*1.2)): -2.;
-				Q *= 1 +  sc*(zeta-zeta_c)*(zeta-zeta_c)*(1-eta*eta*eta/2); //sqrt(fabs(M)));
-			} */
-			// Q *= 1 - .25*pow(fabs(M), .25)*zeta*(zeta-zeta_c)*(1-zeta);
-			// if(zeta<zeta_c) Q *= 1 - pow(M, .25)*zeta*(zeta-zeta_c);
-
+			} else Q = n_b*eta*U; 
 
 			/*  бол-мен правильные зависимости при H,K=0 и местами правильная восприимчивость но есть артефакты
 			// V1

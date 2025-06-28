@@ -19,10 +19,12 @@ void Model::init(std::string path){
 				offsets.push_back(j==mesh_sz[1]-1? (periodic&2? -mesh_sz[0]*(mesh_sz[1]-1):0): mesh_sz[0]);
 				offsets.push_back(k==0? (periodic&4? mesh_sz[0]*mesh_sz[1]*(mesh_sz[2]-1): 0): -mesh_sz[0]*mesh_sz[1]);
 				offsets.push_back(k==mesh_sz[2]-1? (periodic&4? -mesh_sz[0]*mesh_sz[1]*(mesh_sz[2]-1):0): mesh_sz[0]*mesh_sz[1]);
-			}		
+
+				// std::cout<<i<<' '<<j<<' '<<k<<':'; for(int l=0; l<6; l++){ std::cout<<offsets[6*(i+(j+k*mesh_sz[1])*mesh_sz[0])+l]<<','; } std::cout<<'\n';
+			}
 	M = M0; eta = eta0; t = 0; W[1] = -J*eta*n_b/2; W[2] = -Hext*M; W[3] = -K*(1-2*CMD::calc_Mu(nK*M)); W[0] = W[1]+W[2]+W[3];
 
-	ftvals.open(path+"/tvasl.dat"); ftvals<<"#:t M Mx My Mz eta W Wexch Wext Waniso\n"<<t<<' '<<M.abs()<<' '<<M<<' '<<eta<<' '<<W<<std::endl;
+	ftvals.open(path+"/tvals.dat"); ftvals<<"#:t M Mx My Mz eta W Wexch Wext Waniso\n"<<t<<' '<<M.abs()<<' '<<M<<' '<<eta<<' '<<W<<std::endl;
 	fdata.open(path+"/data.msh");
 
 	coeff_cmd.n_b = n_b; coeff_cmd.eta_c = eta_c;
@@ -40,12 +42,16 @@ Model::cell_t Model::calc_dcdt(int st, int i){
 	if(use_cmd){
 		coeff_cmd.eta = c0.eta; for(int k=0; k<3; k++){ coeff_cmd.M[k] = c0.m[k]; coeff_cmd.H[k] = H[k]; }
 		coeff_cmd.calc();
+		// M   += 2*adt*(K*coeff.Theta + .5*coeff.Xi*H + (n_b*coeff.U - T)*coeff.M);
 		for(int k=0; k<3; k++) res.m[k] += gamma*( 2*K*(coeff_cmd.PHI[k]+alpha*coeff_cmd.THETA[k]) + alpha*coeff_cmd.XiH[k] + 2*n_b*alpha*J*coeff_cmd.U*c0.m[k] );
+		// eta += 4*adt*(coeff.U*H*coeff.M*1.333 + K*coeff.Psi + coeff.Q - T*coeff.eta);
 		res.eta = 4*gamma*alpha*(H*c0.m*coeff_cmd.U + K*coeff_cmd.Psi + J*coeff_cmd.Q - T*c0.eta);
 	} else {
 		for(int k=0; k<3; k++){ coeff_llb.M[k] = c0.m[k]; coeff_llb.H[k] = H[k] + n_b*eG*J*c0.m[k]; }
 		coeff_llb.calc();
+		// coeff.M += 2*adt*(K*coeff.Theta + .5*coeff.Xi*(H + n_b*eG*M) - T*M);
 		for(int k=0; k<3; k++) res.m[k] += gamma*( 2*K*(coeff_llb.PHI[k]+alpha*coeff_llb.THETA[k]) + alpha*coeff_llb.XiH[k] );
+		// for(int k=0; k<3; k++) res.m[k] += gamma*( 2*K*(coeff_llb.PHI[k]+alpha*coeff_llb.THETA[k]) + alpha*coeff_llb.XiH[k] );
 	}
 	return res;
 }
@@ -83,6 +89,7 @@ void Model::calc(int steps){
 			cell_t dcdt = calc_dcdt(1, i);
 			c0 += (dc+dcdt*.5f)*(dt*_3);
 			c0.m = rotate(c0.m, randN01.V<3>()*sghT);
+			if(!use_cmd) c0.eta = c0.m*c0.m;
 			M += c0.m; W[3] += -K*(1-2*CMD::calc_Mu(nK*c0.m));  eta += data[0][i].eta;
 		}
 		//----------------------------------------------------------------------
