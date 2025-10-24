@@ -14,5 +14,11 @@ Z3: include/Z3.hpp src/Z3.cpp swig/Z3.i
 	g++ -shared -o _Z3.so Z3_wrap.o Z3.o special.o
 	mv swig/Z3.py swig/Z3_wrap.cxx .
 
-calc-M-eta-to-rho-p-lambda: calc-M-eta-to-rho-p-lambda.cpp include/Z2.hpp include/special.hpp src/Z2.cpp src/special.cpp
+calc-M-eta-to-rho-p-lambda: src/bin/calc-M-eta-to-rho-p-lambda.cpp include/Z2.hpp include/special.hpp src/Z2.cpp src/special.cpp
 	g++ -Wall -O3  -fopenmp -o calc-M-eta-to-rho-p-lambda calc-M-eta-to-rho-p-lambda.cpp src/Z2.cpp src/special.cpp -laiw -ldl
+
+rho-p-lambda-f2av: src/bin/rho-p-lambda-f2av.cpp
+	g++ -Wall -O3  -fopenmp -o rho-p-lambda-f2av src/bin/rho-p-lambda-f2av.cpp -laiw -ldl
+
+rho-p-lambda-f2av-x: src/bin/rho-p-lambda-f2av-x.cpp
+	g++ -Wall -O3  -fopenmp -o rho-p-lambda-f2av-x src/bin/rho-p-lambda-f2av-x.cpp 
